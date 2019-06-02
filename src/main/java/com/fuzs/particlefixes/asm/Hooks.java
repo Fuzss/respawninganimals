@@ -17,6 +17,9 @@ public final class Hooks {
         // vanilla would even run into that bug itself when executing EntityLivingBase#updateItemUse on the server when there are no sub-types for an item, this only doesn't happen due to MC-10369 which this mod fixes
         if (parameters.length == particle.getArgumentCount()) {
 
+            // numberOfParticles has to be 0 so that speed parameters are actually used and not randomised in NetHandlerPlayClient#handleParticles
+            // particleSpeed has to be 1.0 as it is solely used as a multiplier for the speed parameters
+            // the speed parameters are actually rgb values, at least for anything potion related
             world.spawnParticle(particle, xCoord, yCoord, zCoord, 0, xSpeed, ySpeed, zSpeed, 1.0, parameters);
 
         }
