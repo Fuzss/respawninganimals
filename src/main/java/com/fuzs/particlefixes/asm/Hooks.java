@@ -17,7 +17,7 @@ public final class Hooks {
         // vanilla would even run into that bug itself when executing EntityLivingBase#updateItemUse on the server when there are no sub-types for an item, this only doesn't happen due to MC-10369 which this mod fixes
         if (parameters.length == particle.getArgumentCount()) {
 
-            world.spawnParticle(particle, xCoord, yCoord, zCoord, 1, 0, 0, 0, (xSpeed * ySpeed * zSpeed) / 3.0, parameters);
+            world.spawnParticle(particle, xCoord, yCoord, zCoord, 0, xSpeed, ySpeed, zSpeed, 1.0, parameters);
 
         }
 
