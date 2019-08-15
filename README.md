@@ -4,4 +4,4 @@ Makes a whole bunch of particles appear again that have been missing from the ga
 ![ParticleFixes](https://i.imgur.com/NEwH12A.png)
 
 ## Downloads
-Check this project out on [Curse](https://minecraft.curseforge.com/projects/particle-fixes).
+Check this project out on [Curse](https://www.curseforge.com/minecraft/mc-mods/particle-fixes).
