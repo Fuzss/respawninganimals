@@ -33,13 +33,11 @@ public class BreedingHearts {
             if (inLove > 0 && inLove % 10 == 0) {
 
                 Random rnd = animal.getRNG();
-                double posX = animal.posX + (double) (rnd.nextFloat() * animal.getWidth() * 2.0F) - (double) animal.getWidth();
-                double posY = animal.posY + 0.5D + (double) (rnd.nextFloat() * animal.getHeight());
-                double posZ = animal.posZ + (double) (rnd.nextFloat() * animal.getWidth() * 2.0F) - (double) animal.getWidth();
                 double d0 = rnd.nextGaussian() * 0.02D;
                 double d1 = rnd.nextGaussian() * 0.02D;
                 double d2 = rnd.nextGaussian() * 0.02D;
-                ((ServerWorld) animal.world).spawnParticle(ParticleTypes.HEART, posX, posY, posZ, 1, d0, d1, d2, 0D);
+                ((ServerWorld) animal.world).spawnParticle(ParticleTypes.HEART,  animal.getPosXRandom(1.0D),
+                        animal.getPosYRandom() + 0.5D, animal.getPosZRandom(1.0D), 1, d0, d1, d2, 0.0);
             }
         }
     }
