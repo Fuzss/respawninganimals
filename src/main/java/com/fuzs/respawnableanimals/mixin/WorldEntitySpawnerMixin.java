@@ -2,7 +2,6 @@ package com.fuzs.respawnableanimals.mixin;
 
 import com.fuzs.respawnableanimals.config.ConfigBuildHandler;
 import net.minecraft.entity.EntityClassification;
-import net.minecraft.entity.EntityType;
 import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.spawner.WorldEntitySpawner;
 import org.spongepowered.asm.mixin.Mixin;

@@ -10,10 +10,11 @@
     "EntityDensityManagerMixin",
     "WorldEntitySpawnerMixin",
     "TurtleEggBlockMixin",
-    "accessor.IAnimalEntityAccessor",
-    "accessor.IOcelotEntityAccessor"
+    "accessor.IOcelotEntityAccessor",
+    "accessor.IGoalSelectorAccessor"
   ],
   "client": [
+    "client.RabbitModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

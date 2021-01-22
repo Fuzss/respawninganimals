@@ -51,12 +51,4 @@ public abstract class AnimalEntityMixin extends AgeableEntity {
         }
     }
 
-    @Redirect(method = "func_234177_a_", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/AgeableEntity;setChild(Z)V"))
-    public void setChild(AnimalEntity animal, boolean childZombie) {
-
-        // enable persistence for baby animals
-        animal.setChild(childZombie);
-        animal.enablePersistence();
-    }
-
 }

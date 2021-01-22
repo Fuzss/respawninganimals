@@ -1,18 +1,12 @@
 package com.fuzs.respawnableanimals.mixin;
 
-import com.fuzs.respawnableanimals.RespawnableAnimals;
 import com.fuzs.respawnableanimals.config.ConfigBuildHandler;
 import com.fuzs.respawnableanimals.mixin.accessor.IOcelotEntityAccessor;
 import net.minecraft.entity.*;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.OcelotEntity;
 import net.minecraft.entity.passive.TameableEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
@@ -34,6 +28,12 @@ public abstract class MobEntityMixin extends LivingEntity {
 
         super(type, worldIn);
     }
+
+    @Shadow
+    public abstract void enablePersistence();
+
+    @Shadow
+    public abstract boolean canDespawn(double distanceToClosestPlayer);
 
     @Redirect(method = "checkDespawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/MobEntity;canDespawn(D)Z"))
     public boolean canAnimalDespawn(MobEntity entity, double distanceToClosestPlayer) {
@@ -90,25 +90,5 @@ public abstract class MobEntityMixin extends LivingEntity {
             }
         }
     }
-
-    @Inject(method = "func_230254_b_", at = @At("HEAD"), cancellable = true)
-    protected void func_230254_b_(PlayerEntity p_230254_1_, Hand p_230254_2_, CallbackInfoReturnable<ActionResultType> callbackInfo) {
-
-        ItemStack itemstack = p_230254_1_.getHeldItem(p_230254_2_);
-        if (!this.world.isRemote && itemstack.getItem() == Items.STICK) {
-
-            RespawnableAnimals.LOGGER.info("persistent=" + this.isNoDespawnRequired() + " chunkAge=" + this.world.getChunkAt(this.getPosition()).getInhabitedTime());
-            callbackInfo.setReturnValue(ActionResultType.CONSUME);
-        }
-    }
-
-    @Shadow
-    public abstract boolean isNoDespawnRequired();
-
-    @Shadow
-    public abstract void enablePersistence();
-
-    @Shadow
-    public abstract boolean canDespawn(double distanceToClosestPlayer);
 
 }
