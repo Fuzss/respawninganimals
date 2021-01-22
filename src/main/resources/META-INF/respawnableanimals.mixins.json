@@ -11,10 +11,10 @@
     "WorldEntitySpawnerMixin",
     "TurtleEggBlockMixin",
     "accessor.IOcelotEntityAccessor",
-    "accessor.IGoalSelectorAccessor"
+    "accessor.IGoalSelectorAccessor",
+    "accessor.IHurtByTargetGoalAccessor"
   ],
   "client": [
-    "client.RabbitModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1
