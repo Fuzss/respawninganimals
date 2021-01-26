@@ -1,6 +1,6 @@
 package com.fuzs.respawnableanimals.mixin;
 
-import com.fuzs.respawnableanimals.RespawnableAnimals;
+import com.fuzs.respawnableanimals.common.element.AnimalsElement;
 import com.mojang.serialization.DynamicLike;
 import net.minecraft.world.GameRules;
 import org.spongepowered.asm.mixin.Final;
@@ -25,10 +25,12 @@ public abstract class GameRulesMixin {
     @Inject(method = "<init>(Lcom/mojang/serialization/DynamicLike;)V", at = @At("TAIL"))
     public void init(DynamicLike<?> dynamic, CallbackInfo callbackInfo) {
 
-        Optional<String> result = dynamic.get(RespawnableAnimals.PERSISTENT_ANIMALS.getName()).asString().result();
+        // if the gamerule is not present (this is a world which has been loaded without the mod before) set value
+        // to true instead of default false to prevent unwanted behavior such as animals vanishing from farms
+        Optional<String> result = dynamic.get(AnimalsElement.PERSISTENT_ANIMALS.getName()).asString().result();
         if (!result.isPresent()) {
 
-            ((GameRules.BooleanValue) this.rules.get(RespawnableAnimals.PERSISTENT_ANIMALS)).set(true, null);
+            ((GameRules.BooleanValue) this.rules.get(AnimalsElement.PERSISTENT_ANIMALS)).set(true, null);
         }
     }
 

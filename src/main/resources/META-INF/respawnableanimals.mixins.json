@@ -11,7 +11,7 @@
     "EntityDensityManagerMixin",
     "WorldEntitySpawnerMixin",
     "TurtleEggBlockMixin",
-    "accessor.IOcelotEntityAccessor",
+    "AbstractHorseEntityMixin",
     "accessor.IBooleanValueAccessor"
   ],
   "client": [

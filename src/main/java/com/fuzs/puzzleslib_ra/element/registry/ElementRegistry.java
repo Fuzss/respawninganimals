@@ -1,6 +1,7 @@
-package com.fuzs.puzzleslib_ra.element;
+package com.fuzs.puzzleslib_ra.element.registry;
 
 import com.fuzs.puzzleslib_ra.config.ConfigManager;
+import com.fuzs.puzzleslib_ra.element.AbstractElement;
 import com.fuzs.puzzleslib_ra.element.side.IClientElement;
 import com.fuzs.puzzleslib_ra.element.side.ICommonElement;
 import com.fuzs.puzzleslib_ra.element.side.IServerElement;

@@ -82,39 +82,39 @@ public abstract class EventListener {
      */
     protected final <T extends Event> void addListener(Consumer<T> consumer) {
 
-        this.addListener(consumer, EventPriority.NORMAL);
+        this.addListener(EventPriority.NORMAL, consumer);
     }
 
     /**
      * Add a consumer listener with {@link EventPriority} set to {@link EventPriority#NORMAL}
-     * @param consumer Callback to invoke when a matching event is received
      * @param receiveCancelled Indicate if this listener should receive events that have been {@link Cancelable} cancelled
+     * @param consumer Callback to invoke when a matching event is received
      * @param <T> The {@link Event} subclass to listen for
      */
-    protected final <T extends Event> void addListener(Consumer<T> consumer, boolean receiveCancelled) {
+    protected final <T extends Event> void addListener(boolean receiveCancelled, Consumer<T> consumer) {
 
-        this.addListener(consumer, EventPriority.NORMAL, receiveCancelled);
+        this.addListener(EventPriority.NORMAL, receiveCancelled, consumer);
     }
 
     /**
      * Add a consumer listener with the specified {@link EventPriority}
-     * @param consumer Callback to invoke when a matching event is received
      * @param priority {@link EventPriority} for this listener
+     * @param consumer Callback to invoke when a matching event is received
      * @param <T> The {@link Event} subclass to listen for
      */
-    protected final <T extends Event> void addListener(Consumer<T> consumer, EventPriority priority) {
+    protected final <T extends Event> void addListener(EventPriority priority, Consumer<T> consumer) {
 
-        this.addListener(consumer, priority, false);
+        this.addListener(priority, false, consumer);
     }
 
     /**
      * Add a consumer listener with the specified {@link EventPriority}
-     * @param consumer Callback to invoke when a matching event is received
      * @param priority {@link EventPriority} for this listener
      * @param receiveCancelled Indicate if this listener should receive events that have been {@link Cancelable} cancelled
+     * @param consumer Callback to invoke when a matching event is received
      * @param <T> The {@link Event} subclass to listen for
      */
-    protected final <T extends Event> void addListener(Consumer<T> consumer, EventPriority priority, boolean receiveCancelled) {
+    protected final <T extends Event> void addListener(EventPriority priority, boolean receiveCancelled, Consumer<T> consumer) {
 
         this.getEvents().add(new EventStorage<>(consumer, priority, receiveCancelled));
     }

@@ -1,11 +1,9 @@
 package com.fuzs.respawnableanimals.mixin;
 
-import com.fuzs.respawnableanimals.config.ConfigBuildHandler;
-import com.fuzs.respawnableanimals.mixin.accessor.IOcelotEntityAccessor;
+import com.fuzs.respawnableanimals.common.RespawnableAnimalsElements;
+import com.fuzs.respawnableanimals.common.element.AnimalsElement;
 import net.minecraft.entity.*;
 import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.OcelotEntity;
-import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
@@ -38,27 +36,32 @@ public abstract class MobEntityMixin extends LivingEntity {
     @Redirect(method = "checkDespawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/MobEntity;canDespawn(D)Z"))
     public boolean canAnimalDespawn(MobEntity entity, double distanceToClosestPlayer) {
 
-        return entity instanceof AnimalEntity || entity.canDespawn(distanceToClosestPlayer);
+        // replace canDespawn call, as injecting into the base method directly is not sufficient as it is overridden by many sub classes
+        // special behavior is handled in the preventDespawn injector
+        AnimalsElement element = RespawnableAnimalsElements.getAs(RespawnableAnimalsElements.RESPAWNABLE_ANIMALS);
+        if (element.isEnabled() && !this.world.getGameRules().getBoolean(AnimalsElement.PERSISTENT_ANIMALS)) {
+
+            return entity instanceof AnimalEntity || entity.canDespawn(distanceToClosestPlayer);
+        }
+
+        return entity.canDespawn(distanceToClosestPlayer);
     }
 
     @SuppressWarnings("ConstantConditions")
     @Inject(method = "preventDespawn", at = @At("HEAD"), cancellable = true)
     public void preventDespawn(CallbackInfoReturnable<Boolean> callbackInfo) {
 
+        AnimalsElement element = RespawnableAnimalsElements.getAs(RespawnableAnimalsElements.RESPAWNABLE_ANIMALS);
         MobEntity entity = (MobEntity) (Object) this;
-        if (entity instanceof AnimalEntity) {
+        if (element.isEnabled() && !this.world.getGameRules().getBoolean(AnimalsElement.PERSISTENT_ANIMALS) && entity instanceof AnimalEntity) {
 
-            if (ConfigBuildHandler.animalBlacklist.contains(entity.getType()) && canDespawnBePrevented(entity)) {
-
-                callbackInfo.setReturnValue(true);
-            }
-
-            if (ConfigBuildHandler.oldChunkPersistence && entity.world.getChunkAt(entity.getPosition()).getInhabitedTime() > 72000L) {
+            if (element.animalBlacklist.contains(entity.getType()) && canDespawnBePrevented(entity)) {
 
                 callbackInfo.setReturnValue(true);
             }
 
-            if (entity instanceof TameableEntity && ((TameableEntity) entity).isTamed() || entity instanceof OcelotEntity && ((IOcelotEntityAccessor) entity).callIsTrusting()) {
+            // saddled animals will not despawn while saddled, but will do so again when saddle is removed
+            if (entity instanceof IEquipable && ((IEquipable) entity).isHorseSaddled()) {
 
                 callbackInfo.setReturnValue(true);
             }
@@ -81,7 +84,8 @@ public abstract class MobEntityMixin extends LivingEntity {
     @Inject(method = "onInitialSpawn", at = @At("HEAD"))
     public void onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag, CallbackInfoReturnable<ILivingEntityData> callbackInfo) {
 
-        if (ConfigBuildHandler.summonedMobPersistence) {
+        AnimalsElement element = RespawnableAnimalsElements.getAs(RespawnableAnimalsElements.RESPAWNABLE_ANIMALS);
+        if (element.isEnabled() && element.summonedMobPersistence) {
 
             // affects all mobs, not just animals
             if (reason == SpawnReason.COMMAND || reason == SpawnReason.SPAWN_EGG || reason == SpawnReason.DISPENSER) {

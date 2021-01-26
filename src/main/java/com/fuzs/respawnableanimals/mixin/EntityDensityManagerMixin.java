@@ -1,5 +1,7 @@
 package com.fuzs.respawnableanimals.mixin;
 
+import com.fuzs.respawnableanimals.common.RespawnableAnimalsElements;
+import com.fuzs.respawnableanimals.common.element.AnimalsElement;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.world.spawner.WorldEntitySpawner;
@@ -25,12 +27,16 @@ public abstract class EntityDensityManagerMixin {
     @Inject(method = "func_234991_a_", at = @At("HEAD"), cancellable = true)
     private void isBelowMaxNumber(EntityClassification entityClassification, CallbackInfoReturnable<Boolean> callbackInfo) {
 
-        // decrease chunk constant to 15^2 (from 17^2) and increase max number of animals to 15 (from 10)
-        int maxNumberOfCreature = entityClassification != EntityClassification.CREATURE ? entityClassification.getMaxNumberOfCreature() : 15;
-        int maxNumberInWorld = maxNumberOfCreature * this.field_234981_a_ / (int) Math.pow(15.0, 2.0);
-        boolean isBelowMaxNumber = this.field_234982_b_.getInt(entityClassification) < maxNumberInWorld;
+        AnimalsElement element = RespawnableAnimalsElements.getAs(RespawnableAnimalsElements.RESPAWNABLE_ANIMALS);
+        if (element.isEnabled()) {
 
-        callbackInfo.setReturnValue(isBelowMaxNumber);
+            // decrease chunk constant to 15^2 (from 17^2) and increase max number of animals to 15 (from 10)
+            int maxNumberOfCreature = entityClassification != EntityClassification.CREATURE ? entityClassification.getMaxNumberOfCreature() : 15;
+            int maxNumberInWorld = maxNumberOfCreature * this.field_234981_a_ / (int) Math.pow(15.0, 2.0);
+            boolean isBelowMaxNumber = this.field_234982_b_.getInt(entityClassification) < maxNumberInWorld;
+
+            callbackInfo.setReturnValue(isBelowMaxNumber);
+        }
     }
 
 }
