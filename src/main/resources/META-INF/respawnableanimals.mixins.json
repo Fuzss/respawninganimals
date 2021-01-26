@@ -5,14 +5,14 @@
   "package": "com.fuzs.respawnableanimals.mixin",
   "refmap": "respawnableanimals.refmap.json",
   "mixins": [
+    "GameRulesMixin",
     "MobEntityMixin",
     "AnimalEntityMixin",
     "EntityDensityManagerMixin",
     "WorldEntitySpawnerMixin",
     "TurtleEggBlockMixin",
     "accessor.IOcelotEntityAccessor",
-    "accessor.IGoalSelectorAccessor",
-    "accessor.IHurtByTargetGoalAccessor"
+    "accessor.IBooleanValueAccessor"
   ],
   "client": [
   ],

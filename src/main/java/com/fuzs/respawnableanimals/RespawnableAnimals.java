@@ -1,9 +1,13 @@
 package com.fuzs.respawnableanimals;
 
-import com.fuzs.respawnableanimals.common.RabbitAIFixer;
+import com.fuzs.respawnableanimals.capability.AnimalsCapabilities;
+import com.fuzs.respawnableanimals.capability.container.AnimalsCapability;
 import com.fuzs.respawnableanimals.config.ConfigBuildHandler;
 import com.fuzs.respawnableanimals.config.ConfigManager;
+import com.fuzs.respawnableanimals.mixin.accessor.IBooleanValueAccessor;
 import net.minecraft.entity.EntityClassification;
+import net.minecraft.world.GameRules;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.BabyEntitySpawnEvent;
 import net.minecraftforge.event.world.WorldEvent;
@@ -24,6 +28,8 @@ public class RespawnableAnimals {
     public static final String NAME = "Respawnable Animals";
     public static final Logger LOGGER = LogManager.getLogger(NAME);
 
+    public static final GameRules.RuleKey<GameRules.BooleanValue> PERSISTENT_ANIMALS = GameRules.register("persistentAnimals", GameRules.Category.SPAWNING, IBooleanValueAccessor.callCreate(false));
+
     public RespawnableAnimals() {
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onCommonSetup);
@@ -36,9 +42,10 @@ public class RespawnableAnimals {
 
     private void onCommonSetup(final FMLCommonSetupEvent evt) {
 
+        new AnimalsCapabilities();
         MinecraftForge.EVENT_BUS.addListener(EventPriority.LOW, this::onBabyEntitySpawn);
         MinecraftForge.EVENT_BUS.addListener(this::onPotentialSpawns);
-        RabbitAIFixer.addListener(MinecraftForge.EVENT_BUS);
+        MinecraftForge.EVENT_BUS.addListener(this::onWorldLoad);
     }
 
     private void onBabyEntitySpawn(final BabyEntitySpawnEvent evt) {
@@ -57,6 +64,15 @@ public class RespawnableAnimals {
             // prevent blacklisted animals from being respawned
             // this is not a good solution but I couldn't think of any other way
             evt.getList().removeIf(spawner -> ConfigBuildHandler.animalBlacklist.contains(spawner.type));
+        }
+    }
+
+    private void onWorldLoad(final WorldEvent.Load evt) {
+
+        if (evt.getWorld() instanceof ServerWorld && ((ServerWorld) evt.getWorld()).getGameTime() < 72000L) {
+
+            AnimalsCapabilities.getCapability((ServerWorld) evt.getWorld(), AnimalsCapabilities.ANIMALS)
+                    .ifPresent(AnimalsCapability::enable);
         }
     }
 

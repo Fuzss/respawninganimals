@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 @Mixin(WorldEntitySpawner.class)
-public class WorldEntitySpawnerMixin {
+public abstract class WorldEntitySpawnerMixin {
 
     @ModifyVariable(method = "func_234979_a_", at = @At("HEAD"), ordinal = 2)
     private static boolean getShouldSpawnAnimals(boolean shouldSpawnAnimals) {
