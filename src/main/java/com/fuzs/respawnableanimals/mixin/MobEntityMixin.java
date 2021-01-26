@@ -60,9 +60,10 @@ public abstract class MobEntityMixin extends LivingEntity {
                 callbackInfo.setReturnValue(true);
             }
 
-            // saddled animals will not despawn while saddled, but will do so again when saddle is removed
+            // better than hooking every call of IEquipable#isHorseSaddled
             if (entity instanceof IEquipable && ((IEquipable) entity).isHorseSaddled()) {
 
+                entity.enablePersistence();
                 callbackInfo.setReturnValue(true);
             }
         }
