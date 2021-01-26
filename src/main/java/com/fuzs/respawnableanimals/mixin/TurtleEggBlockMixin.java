@@ -23,8 +23,8 @@ public abstract class TurtleEggBlockMixin extends Block {
         super(properties);
     }
 
-    @Inject(method = "randomTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/TurtleEntity;setGrowingAge(I)V"), locals = LocalCapture.CAPTURE_FAILSOFT)
-    public void setGrowingAge(BlockState state, ServerWorld worldIn, BlockPos pos, Random random, CallbackInfo callbackInfo, int i, int j, TurtleEntity turtleentity) {
+    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/TurtleEntity;setGrowingAge(I)V"), locals = LocalCapture.CAPTURE_FAILSOFT)
+    public void tick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random, CallbackInfo callbackInfo, int i, int j, TurtleEntity turtleentity) {
 
         // enable persistence for baby turtles
         turtleentity.enablePersistence();

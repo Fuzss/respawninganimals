@@ -3,9 +3,8 @@ package com.fuzs.puzzleslib_ra.network;
 import com.fuzs.puzzleslib_ra.PuzzlesLib;
 import com.fuzs.puzzleslib_ra.network.message.IMessage;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkRegistry;
@@ -103,7 +102,7 @@ public class NetworkHandler {
      * @param message message to send
      * @param dimension dimension to send message in
      */
-    public void sendToDimension(IMessage message, RegistryKey<World> dimension) {
+    public void sendToDimension(IMessage message, DimensionType dimension) {
 
         MAIN_CHANNEL.send(PacketDistributor.DIMENSION.with(() -> dimension), message);
     }

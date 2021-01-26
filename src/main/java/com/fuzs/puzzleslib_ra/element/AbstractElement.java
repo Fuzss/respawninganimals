@@ -12,7 +12,7 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
+import net.minecraftforge.fml.event.lifecycle.ModLifecycleEvent;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.apache.commons.lang3.StringUtils;
 
@@ -123,7 +123,7 @@ public abstract class AbstractElement extends EventListener implements IConfigur
      * register Forge events from internal storage and call sided load methods
      * no need to check physical side as the setup event won't be called anyways
      */
-    public final void load(ParallelDispatchEvent evt) {
+    public final void load(ModLifecycleEvent evt) {
 
         this.loadEvents(evt);
         if (evt instanceof FMLCommonSetupEvent && this instanceof ICommonElement) {
@@ -142,7 +142,7 @@ public abstract class AbstractElement extends EventListener implements IConfigur
      * initial registering for events
      * @param evt setup event this is called from
      */
-    private void loadEvents(ParallelDispatchEvent evt) {
+    private void loadEvents(ModLifecycleEvent evt) {
 
         if (this instanceof ICommonElement) {
 

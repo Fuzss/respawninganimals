@@ -8,8 +8,9 @@
     "GameRulesMixin",
     "MobEntityMixin",
     "AnimalEntityMixin",
-    "EntityDensityManagerMixin",
+    "PigEntityMixin",
     "WorldEntitySpawnerMixin",
+    "ServerChunkProviderMixin",
     "TurtleEggBlockMixin",
     "AbstractHorseEntityMixin",
     "accessor.IBooleanValueAccessor"

@@ -6,7 +6,7 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.IServerWorld;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -59,12 +59,6 @@ public abstract class MobEntityMixin extends LivingEntity {
 
                 callbackInfo.setReturnValue(true);
             }
-
-            // saddled animals will not despawn while saddled, but will do so again when saddle is removed
-            if (entity instanceof IEquipable && ((IEquipable) entity).isHorseSaddled()) {
-
-                callbackInfo.setReturnValue(true);
-            }
         }
     }
 
@@ -82,7 +76,7 @@ public abstract class MobEntityMixin extends LivingEntity {
     }
 
     @Inject(method = "onInitialSpawn", at = @At("HEAD"))
-    public void onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag, CallbackInfoReturnable<ILivingEntityData> callbackInfo) {
+    public void onInitialSpawn(IWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag, CallbackInfoReturnable<ILivingEntityData> callbackInfo) {
 
         AnimalsElement element = RespawnableAnimalsElements.getAs(RespawnableAnimalsElements.RESPAWNABLE_ANIMALS);
         if (element.isEnabled() && element.summonedMobPersistence) {

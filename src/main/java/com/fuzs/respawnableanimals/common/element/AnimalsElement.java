@@ -18,7 +18,7 @@ import java.util.Set;
 
 public class AnimalsElement extends AbstractElement implements ICommonElement {
 
-    public static final GameRules.RuleKey<GameRules.BooleanValue> PERSISTENT_ANIMALS = GameRules.register("persistentAnimals", GameRules.Category.SPAWNING, IBooleanValueAccessor.callCreate(false));
+    public static final GameRules.RuleKey<GameRules.BooleanValue> PERSISTENT_ANIMALS = GameRules.register("persistentAnimals", IBooleanValueAccessor.callCreate(false));
     
     public Set<EntityType<?>> animalBlacklist;
     public boolean summonedMobPersistence;
@@ -65,7 +65,7 @@ public class AnimalsElement extends AbstractElement implements ICommonElement {
 
             // prevent blacklisted animals from being respawned
             // this is not a good solution but I couldn't think of any other way
-            evt.getList().removeIf(spawner -> this.animalBlacklist.contains(spawner.type));
+            evt.getList().removeIf(spawner -> this.animalBlacklist.contains(spawner.entityType));
         }
     }
 
