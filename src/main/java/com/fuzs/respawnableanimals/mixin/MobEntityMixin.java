@@ -59,13 +59,6 @@ public abstract class MobEntityMixin extends LivingEntity {
 
                 callbackInfo.setReturnValue(true);
             }
-
-            // better than hooking every call of IEquipable#isHorseSaddled
-            if (entity instanceof IEquipable && ((IEquipable) entity).isHorseSaddled()) {
-
-                entity.enablePersistence();
-                callbackInfo.setReturnValue(true);
-            }
         }
     }
 
