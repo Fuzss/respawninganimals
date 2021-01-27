@@ -5,14 +5,15 @@
   "package": "com.fuzs.respawnableanimals.mixin",
   "refmap": "respawnableanimals.refmap.json",
   "mixins": [
-    "GameRulesMixin",
     "MobEntityMixin",
     "AnimalEntityMixin",
-    "PigEntityMixin",
+    "PlayerEntityMixin",
+    "AbstractHorseEntityMixin",
     "WorldEntitySpawnerMixin",
+    "WanderingTraderSpawnerMixin",
     "ServerChunkProviderMixin",
     "TurtleEggBlockMixin",
-    "AbstractHorseEntityMixin",
+    "GameRulesMixin",
     "accessor.IBooleanValueAccessor"
   ],
   "client": [
