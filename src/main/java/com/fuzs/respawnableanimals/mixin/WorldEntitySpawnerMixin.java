@@ -2,12 +2,13 @@ package com.fuzs.respawnableanimals.mixin;
 
 import com.fuzs.respawnableanimals.common.RespawnableAnimalsElements;
 import com.fuzs.respawnableanimals.common.element.AnimalsElement;
+import net.minecraft.entity.EntityClassification;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.spawner.WorldEntitySpawner;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,17 +17,10 @@ import java.util.stream.Collectors;
 @Mixin(WorldEntitySpawner.class)
 public abstract class WorldEntitySpawnerMixin {
 
-    @ModifyVariable(method = "func_234979_a_", at = @At("HEAD"), ordinal = 2)
-    private static boolean getShouldSpawnAnimals(boolean shouldSpawnAnimals) {
+    @Redirect(method = "performWorldGenSpawning", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/biome/MobSpawnInfo;getSpawners(Lnet/minecraft/entity/EntityClassification;)Ljava/util/List;"))
+    private static List<MobSpawnInfo.Spawners> getSpawners(MobSpawnInfo mobspawninfo, EntityClassification classification, IServerWorld worldIn) {
 
-        // remove 700 tick delay for spawning animals
-        AnimalsElement element = RespawnableAnimalsElements.getAs(RespawnableAnimalsElements.RESPAWNABLE_ANIMALS);
-        return element.isEnabled() || shouldSpawnAnimals;
-    }
-
-    @ModifyVariable(method = "performWorldGenSpawning", at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z"), ordinal = 0)
-    private static List<MobSpawnInfo.Spawners> getSpawners(List<MobSpawnInfo.Spawners> list, IServerWorld worldIn) {
-
+        List<MobSpawnInfo.Spawners> list = mobspawninfo.getSpawners(classification);
         AnimalsElement element = RespawnableAnimalsElements.getAs(RespawnableAnimalsElements.RESPAWNABLE_ANIMALS);
         if (!element.isEnabled() || worldIn.getWorld().getGameRules().getBoolean(AnimalsElement.PERSISTENT_ANIMALS)) {
 

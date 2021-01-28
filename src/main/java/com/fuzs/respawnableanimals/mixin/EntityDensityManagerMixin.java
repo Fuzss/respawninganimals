@@ -16,6 +16,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(WorldEntitySpawner.EntityDensityManager.class)
 public abstract class EntityDensityManagerMixin {
 
+    private static final int field_234960_b_ = (int) Math.pow(17.0, 2.0);
+
     @Shadow
     @Final
     private int field_234981_a_;
@@ -30,9 +32,9 @@ public abstract class EntityDensityManagerMixin {
         AnimalsElement element = RespawnableAnimalsElements.getAs(RespawnableAnimalsElements.RESPAWNABLE_ANIMALS);
         if (element.isEnabled()) {
 
-            // decrease chunk constant to 15^2 (from 17^2) and increase max number of animals to 15 (from 10)
-            int maxNumberOfCreature = entityClassification != EntityClassification.CREATURE ? entityClassification.getMaxNumberOfCreature() : 15;
-            int maxNumberInWorld = maxNumberOfCreature * this.field_234981_a_ / (int) Math.pow(15.0, 2.0);
+            // modify max number of animals
+            int maxNumberOfCreature = entityClassification != EntityClassification.CREATURE ? entityClassification.getMaxNumberOfCreature() : element.maxAnimalNumber;
+            int maxNumberInWorld = maxNumberOfCreature * this.field_234981_a_ / field_234960_b_;
             boolean isBelowMaxNumber = this.field_234982_b_.getInt(entityClassification) < maxNumberInWorld;
 
             callbackInfo.setReturnValue(isBelowMaxNumber);
