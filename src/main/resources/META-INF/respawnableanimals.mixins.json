@@ -8,8 +8,6 @@
     "MobEntityMixin",
     "AnimalEntityMixin",
     "PlayerEntityMixin",
-    "AbstractHorseEntityMixin",
-    "WorldEntitySpawnerMixin",
     "WanderingTraderSpawnerMixin",
     "ServerChunkProviderMixin",
     "TurtleEggBlockMixin",

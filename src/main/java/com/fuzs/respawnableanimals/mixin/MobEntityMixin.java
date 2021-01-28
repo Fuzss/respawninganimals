@@ -30,21 +30,11 @@ public abstract class MobEntityMixin extends LivingEntity {
     @Shadow
     public abstract void enablePersistence();
 
-    @Shadow
-    public abstract boolean canDespawn(double distanceToClosestPlayer);
-
     @Redirect(method = "checkDespawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/MobEntity;canDespawn(D)Z"))
     public boolean canAnimalDespawn(MobEntity entity, double distanceToClosestPlayer) {
 
-        // replace canDespawn call, as injecting into the base method directly is not sufficient as it is overridden by many sub classes
-        // special behavior is handled in the preventDespawn injector
         AnimalsElement element = RespawnableAnimalsElements.getAs(RespawnableAnimalsElements.RESPAWNABLE_ANIMALS);
-        if (element.isEnabled() && !this.world.getGameRules().getBoolean(AnimalsElement.PERSISTENT_ANIMALS)) {
-
-            return entity instanceof AnimalEntity || entity.canDespawn(distanceToClosestPlayer);
-        }
-
-        return entity.canDespawn(distanceToClosestPlayer);
+        return AnimalsElement.canAnimalDespawn(element, entity, distanceToClosestPlayer);
     }
 
     @SuppressWarnings("ConstantConditions")
