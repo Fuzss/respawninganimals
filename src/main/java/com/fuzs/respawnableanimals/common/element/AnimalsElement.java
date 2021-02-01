@@ -52,7 +52,7 @@ public class AnimalsElement extends AbstractElement implements ICommonElement {
     @Override
     public void setupCommonConfig(ForgeConfigSpec.Builder builder) {
 
-        addToConfig(builder.comment("Blacklist animals which will never despawn.", EntryCollectionBuilder.CONFIG_STRING).define("Animal Blacklist", Lists.<String>newArrayList()), v -> this.animalBlacklist = v, v -> new EntryCollectionBuilder<>(ForgeRegistries.ENTITIES).buildEntrySet(v, animal -> animal.getClassification() == EntityClassification.CREATURE, "No animal"));
+        addToConfig(builder.comment("Blacklist animals which will never despawn.", EntryCollectionBuilder.CONFIG_STRING).define("Animal Blacklist", Lists.<String>newArrayList()), v -> this.animalBlacklist = v, v -> new EntryCollectionBuilder<>(ForgeRegistries.ENTITIES).buildEntrySet(v));
         addToConfig(builder.comment("Constant for determining when to stop spawning animals in a world. Normally set to 10, monster constant is 70 for comparison. 18 is chosen to mimic spawning mechanics of the Beta era.").define("Animal Mob Cap", 18), v -> this.maxAnimalNumber = v);
         addToConfig(builder.comment("Make all mobs (not just animals) automatically persistent when spawned using the \"/summon\" command, a spawn egg or a dispenser.").define("Summoned Mob Persistence", false), v -> this.summonedMobPersistence = v);
     }
@@ -74,12 +74,9 @@ public class AnimalsElement extends AbstractElement implements ICommonElement {
 
     private void onPotentialSpawns(final WorldEvent.PotentialSpawns evt) {
 
-        if (evt.getType() == EntityClassification.CREATURE) {
-
-            // prevent blacklisted animals from being respawned to prevent them from spawning endlessly as they are also blacklisted from counting towards the mob cap
-            // this is not a good solution but I couldn't think of any other way
-            evt.getList().removeIf(spawner -> this.animalBlacklist.contains(spawner.entityType));
-        }
+        // prevent blacklisted animals from being respawned to prevent them from spawning endlessly as they are also blacklisted from counting towards the mob cap
+        // this is not a good solution but I couldn't think of any other way
+        evt.getList().removeIf(spawner -> this.animalBlacklist.contains(spawner.entityType));
     }
 
     private void onEntityJoinWorld(final EntityJoinWorldEvent evt) {
@@ -99,20 +96,26 @@ public class AnimalsElement extends AbstractElement implements ICommonElement {
         }
 
         World world = (World) evt.getWorld();
-        if (evt.getSpawnReason() == SpawnReason.CHUNK_GENERATION) {
+        if (evt.getSpawnReason() == SpawnReason.CHUNK_GENERATION || evt.getSpawnReason() == SpawnReason.NATURAL) {
 
-            // prevent animals from being spawned on world creation, but exclude blacklisted animals
-            if (!world.getGameRules().getBoolean(PERSISTENT_ANIMALS) && !this.animalBlacklist.contains(evt.getEntity().getType())) {
+            if (evt.getEntity() instanceof AnimalEntity && evt.getEntity().getType().getClassification() == EntityClassification.CREATURE) {
 
-                evt.setResult(Event.Result.DENY);
-            }
-        } else if (evt.getSpawnReason() == SpawnReason.NATURAL) {
+                // prevent animals from being spawned on world creation, but exclude blacklisted animals
+                if (!world.getGameRules().getBoolean(PERSISTENT_ANIMALS) && !this.animalBlacklist.contains(evt.getEntity().getType())) {
 
-            // prevent animals from being spawned when too far away from the closest player
-            double distanceToClosestPlayer = getPlayerDistance(world, evt.getX(), evt.getY(), evt.getZ());
-            if (evt.getEntity() instanceof AnimalEntity && !this.canSpawn(world, (MobEntity) evt.getEntity(), distanceToClosestPlayer)) {
+                    if (evt.getSpawnReason() == SpawnReason.CHUNK_GENERATION) {
 
-                evt.setResult(Event.Result.DENY);
+                        evt.setResult(Event.Result.DENY);
+                    } else {
+
+                        // prevent animals from being spawned when too far away from the closest player
+                        double distanceToClosestPlayer = getPlayerDistance(world, evt.getX(), evt.getY(), evt.getZ());
+                        if (!this.canSpawn(world, (MobEntity) evt.getEntity(), distanceToClosestPlayer)) {
+
+                            evt.setResult(Event.Result.DENY);
+                        }
+                    }
+                }
             }
         }
     }
@@ -143,7 +146,7 @@ public class AnimalsElement extends AbstractElement implements ICommonElement {
         // special behavior such as blacklist is handled in preventDespawn injector
         if (element.isEnabled() && !entity.world.getGameRules().getBoolean(PERSISTENT_ANIMALS)) {
 
-            return entity instanceof AnimalEntity || entity.canDespawn(distanceToClosestPlayer);
+            return entity instanceof AnimalEntity && entity.getType().getClassification() == EntityClassification.CREATURE || entity.canDespawn(distanceToClosestPlayer);
         }
 
         return entity.canDespawn(distanceToClosestPlayer);

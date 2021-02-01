@@ -3,7 +3,7 @@ package com.fuzs.respawnableanimals.mixin;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -23,10 +23,10 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     public boolean startRiding(@Nonnull Entity entityIn, boolean force) {
 
         boolean flag = super.startRiding(entityIn, force);
-        if (flag && entityIn instanceof MobEntity) {
+        if (flag && entityIn instanceof AnimalEntity) {
 
             // make all mobs ridden by player persistent
-            ((MobEntity) entityIn).enablePersistence();
+            ((AnimalEntity) entityIn).enablePersistence();
         }
 
         return flag;
