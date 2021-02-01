@@ -8,7 +8,7 @@
     "MobEntityMixin",
     "AnimalEntityMixin",
     "PlayerEntityMixin",
-    "ServerChunkProviderMixin",
+    "WorldEntitySpawnerMixin",
     "EntityDensityManagerMixin",
     "WanderingTraderSpawnerMixin",
     "TurtleEggBlockMixin",
