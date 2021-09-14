@@ -10,6 +10,7 @@ import fuzs.respawnableanimals.mixin.accessor.BooleanValueAccessor;
 import net.minecraft.entity.*;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.PigEntity;
+import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.passive.horse.SkeletonHorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
@@ -51,6 +52,7 @@ public class RespawnableAnimalsElement extends AbstractElement implements ICommo
     @Override
     public void constructCommon() {
 
+        // low priority for environmental mod compat
         this.addListener(this::onBabyEntitySpawn, EventPriority.LOW);
         this.addListener(this::onAnimalTame);
         this.addListener(this::onPotentialSpawns);
@@ -142,11 +144,7 @@ public class RespawnableAnimalsElement extends AbstractElement implements ICommo
 
     private double getPlayerDistance(ServerWorld serverWorld, double x, double y, double z) {
 
-        PlayerEntity playerentity = serverWorld.getNearestPlayer(x, y, z, -1.0, false);
-
-        // can't be null as the used event wouldn't have been called then
-        assert playerentity != null;
-        return playerentity.distanceToSqr(x, y, z);
+        return serverWorld.getNearestPlayer(x, y, z, -1.0, false).distanceToSqr(x, y, z);
     }
 
     private boolean canSpawn(ServerWorld serverWorld, MobEntity entity, double distanceToClosestPlayer) {
@@ -166,7 +164,7 @@ public class RespawnableAnimalsElement extends AbstractElement implements ICommo
         // special behavior such as blacklist is handled in preventDespawn injector
         if (!entity.level.getGameRules().getBoolean(PERSISTENT_ANIMALS)) {
 
-            return entity instanceof AnimalEntity && entity.getType().getCategory() == EntityClassification.CREATURE || entity.removeWhenFarAway(distanceToClosestPlayer);
+            return entity instanceof AnimalEntity && entity.getType().getCategory() == EntityClassification.CREATURE && (!(entity instanceof TameableEntity) || !((TameableEntity) entity).isTame()) || entity.removeWhenFarAway(distanceToClosestPlayer);
         }
 
         return entity.removeWhenFarAway(distanceToClosestPlayer);

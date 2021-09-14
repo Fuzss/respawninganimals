@@ -15,10 +15,9 @@ public abstract class EntityDensityManagerMixin {
     @Redirect(method = "canSpawnForCategory", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/EntityClassification;getMaxInstancesPerChunk()I"))
     public int getMaxNumberOfCreature(EntityClassification entityclassification) {
 
-        RespawnableAnimalsElement element = (RespawnableAnimalsElement) RespawnableAnimals.RESPAWNABLE_ANIMALS;
         if (entityclassification == EntityClassification.CREATURE) {
 
-            return element.maxAnimalNumber;
+            return ((RespawnableAnimalsElement) RespawnableAnimals.RESPAWNABLE_ANIMALS).maxAnimalNumber;
         }
 
         return entityclassification.getMaxInstancesPerChunk();

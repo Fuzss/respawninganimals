@@ -33,7 +33,6 @@ public abstract class MobEntityMixin extends LivingEntity {
     @Redirect(method = "checkDespawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/MobEntity;removeWhenFarAway(D)Z"))
     public boolean removeWhenFarAway(MobEntity entity, double distanceToClosestPlayer) {
 
-        RespawnableAnimalsElement element = (RespawnableAnimalsElement) RespawnableAnimals.RESPAWNABLE_ANIMALS;
         return RespawnableAnimalsElement.canAnimalDespawn(entity, distanceToClosestPlayer);
     }
 
@@ -41,11 +40,10 @@ public abstract class MobEntityMixin extends LivingEntity {
     @Inject(method = "requiresCustomPersistence", at = @At("HEAD"), cancellable = true)
     public void requiresCustomPersistence(CallbackInfoReturnable<Boolean> callbackInfo) {
 
-        RespawnableAnimalsElement element = (RespawnableAnimalsElement) RespawnableAnimals.RESPAWNABLE_ANIMALS;
         MobEntity entity = (MobEntity) (Object) this;
         if (!this.level.getGameRules().getBoolean(RespawnableAnimalsElement.PERSISTENT_ANIMALS) && entity instanceof AnimalEntity) {
 
-            if (element.animalBlacklist.contains(entity.getType()) && canDespawnBePrevented(entity)) {
+            if (((RespawnableAnimalsElement) RespawnableAnimals.RESPAWNABLE_ANIMALS).animalBlacklist.contains(entity.getType()) && canDespawnBePrevented(entity)) {
 
                 callbackInfo.setReturnValue(true);
             }
@@ -68,8 +66,7 @@ public abstract class MobEntityMixin extends LivingEntity {
     @Inject(method = "finalizeSpawn", at = @At("HEAD"))
     public void finalizeSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag, CallbackInfoReturnable<ILivingEntityData> callbackInfo) {
 
-        RespawnableAnimalsElement element = (RespawnableAnimalsElement) RespawnableAnimals.RESPAWNABLE_ANIMALS;
-        if (element.summonedMobPersistence) {
+        if (((RespawnableAnimalsElement) RespawnableAnimals.RESPAWNABLE_ANIMALS).summonedMobPersistence) {
 
             // affects all mobs, not just animals
             if (reason == SpawnReason.COMMAND || reason == SpawnReason.SPAWN_EGG || reason == SpawnReason.DISPENSER) {

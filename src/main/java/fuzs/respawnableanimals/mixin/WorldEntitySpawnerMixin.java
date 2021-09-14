@@ -1,6 +1,5 @@
 package fuzs.respawnableanimals.mixin;
 
-import fuzs.respawnableanimals.RespawnableAnimals;
 import fuzs.respawnableanimals.element.RespawnableAnimalsElement;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.world.server.ServerWorld;
@@ -17,7 +16,6 @@ public abstract class WorldEntitySpawnerMixin {
     private static boolean isPersistent(EntityClassification entityclassification, ServerWorld serverWorld) {
 
         // remove 400 tick delay for spawning animals
-        RespawnableAnimalsElement element = (RespawnableAnimalsElement) RespawnableAnimals.RESPAWNABLE_ANIMALS;
         if (entityclassification == EntityClassification.CREATURE && !serverWorld.getGameRules().getBoolean(RespawnableAnimalsElement.PERSISTENT_ANIMALS)) {
 
             return false;
