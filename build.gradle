@@ -1,6 +1,6 @@
 import groovy.json.*
-
 import java.util.regex.Pattern
+import net.minecraftforge.gradle.common.tasks.SignJar
 
 buildscript {
 
@@ -189,24 +189,24 @@ def createJarTask(def name, def type, def sources) {
     }
 }
 
-//def createSignJarTask(def name, def jarTask) {
-//
-//    return tasks.create(name, net.minecraftforge.gradle.common.task.SignJar) {
-//
-//        onlyIf {
-//
-//            project.hasProperty('keyStore')
-//        }
-//
-//        keyStore = project.findProperty('keyStore')
-//        alias = project.findProperty('keyStoreAlias')
-//        storePass = project.findProperty('keyStorePass')
-//        keyPass = project.findProperty('keyStoreKeyPass')
-//        inputFile = outputFile = jarTask.archivePath
-//        dependsOn jarTask
-//        group 'jar'
-//    }
-//}
+def createSignJarTask(def name, def jarTask) {
+
+    return tasks.create(name, SignJar) {
+
+        onlyIf {
+
+            project.hasProperty('keyStore')
+        }
+
+        keyStore = project.findProperty('keyStore')
+        alias = project.findProperty('keyStoreAlias')
+        storePass = project.findProperty('keyStorePass')
+        keyPass = project.findProperty('keyStoreKeyPass')
+        inputFile = outputFile = jarTask.archivePath
+        dependsOn jarTask
+        group 'jar'
+    }
+}
 
 jar {
 
@@ -220,14 +220,14 @@ createJarTask("deobfJar", "deobf", [sourceSets.main.output])
 createJarTask("sourceJar", "sources", sourceSets.main.allSource)
 createJarTask("javadocJar", "javadoc", javadoc)
 
-//createSignJarTask("signJar", jar)
-//createSignJarTask("signDeobfJar", deobfJar)
-//createSignJarTask("signSourceJar", sourceJar)
-//createSignJarTask("signJavadocJar", javadocJar)
+createSignJarTask("signJar", jar)
+createSignJarTask("signDeobfJar", deobfJar)
+createSignJarTask("signSourceJar", sourceJar)
+createSignJarTask("signJavadocJar", javadocJar)
 
 // finalize all jar build tasks with a signing task
-//def jarTasks = tasks.findAll { task -> !task.name.startsWith('sign') && task.name.toLowerCase().contains("jar")}
-//jarTasks.each { task -> task.finalizedBy tasks.getByPath("sign" + task.name.substring(0, 1).toUpperCase() + task.name.substring(1))}
+def jarTasks = tasks.findAll { task -> !task.name.startsWith('sign') && task.name.toLowerCase().contains("jar")}
+jarTasks.each { task -> task.finalizedBy tasks.getByPath("sign" + task.name.substring(0, 1).toUpperCase() + task.name.substring(1))}
 
 artifacts {
 
@@ -383,10 +383,11 @@ signing {
     sign publishing.publications.mavenJava
 }
 
-//// general signing task runs before sources jar is signed otherwise
-//signMavenJavaPublication.dependsOn project.signSourceJar
-//// jar is otherwise signed before reobfJar task runs
-//assemble.finalizedBy project.signJar
-// only copy when building manually
-build.finalizedBy project.copyJarToDir, project.incrementBuildNumber
+// general signing task runs before sources jar is signed otherwise
+signMavenJavaPublication.dependsOn project.signSourceJar
+// jar is otherwise signed before reobfJar task runs
+assemble.finalizedBy project.signJar
 tasks.getByPath('curseforge').finalizedBy project.refreshUpdateJson
+// only copy when building manually
+project.copyJarToDir.dependsOn signJar
+build.finalizedBy project.copyJarToDir, project.incrementBuildNumber
