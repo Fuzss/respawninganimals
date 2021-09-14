@@ -2,18 +2,19 @@
   "required": true,
   "minVersion": "0.8",
   "compatibilityLevel": "JAVA_8",
-  "package": "com.fuzs.respawnableanimals.mixin",
+  "package": "fuzs.respawnableanimals.mixin",
   "refmap": "respawnableanimals.refmap.json",
   "mixins": [
-    "MobEntityMixin",
     "AnimalEntityMixin",
-    "PlayerEntityMixin",
-    "WorldEntitySpawnerMixin",
+    "BeehiveTreeDecoratorMixin",
     "EntityDensityManagerMixin",
-    "WanderingTraderSpawnerMixin",
-    "TurtleEggBlockMixin",
     "GameRulesMixin",
-    "accessor.IBooleanValueAccessor"
+    "MobEntityMixin",
+    "PlayerEntityMixin",
+    "TurtleEggBlockMixin",
+    "WanderingTraderSpawnerMixin",
+    "WorldEntitySpawnerMixin",
+    "accessor.BooleanValueAccessor"
   ],
   "client": [
   ],
