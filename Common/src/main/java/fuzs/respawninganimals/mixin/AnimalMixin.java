@@ -19,7 +19,7 @@ public abstract class AnimalMixin extends AgeableMob {
         super(entityType, level);
     }
 
-    @Inject(method = "setInLove(Lnet/minecraft/entity/player/PlayerEntity;)V", at = @At("HEAD"))
+    @Inject(method = "setInLove(Lnet/minecraft/world/entity/player/Player;)V", at = @At("HEAD"))
     public void setInLove(@Nullable Player player, CallbackInfo callback) {
         // enable persistence for animals that have been bred
         this.setPersistenceRequired();

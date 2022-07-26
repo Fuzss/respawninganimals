@@ -5,16 +5,16 @@
   "package": "fuzs.respawninganimals.mixin",
   "refmap": "respawninganimals.refmap.json",
   "mixins": [
-    "AnimalEntityMixin",
-    "BeehiveTreeDecoratorMixin",
+    "AnimalMixin",
+    "BeehiveBlockEntityMixin",
     "EntityDensityManagerMixin",
     "GameRulesMixin",
-    "MobEntityMixin",
-    "PlayerEntityMixin",
+    "MobMixin",
+    "NaturalSpawnerMixin",
+    "PlayerMixin",
     "TurtleEggBlockMixin",
     "WanderingTraderSpawnerMixin",
-    "WorldEntitySpawnerMixin",
-    "accessor.BooleanValueAccessor"
+    "accessor.SpawnStateAccessor"
   ],
   "client": [
   ],

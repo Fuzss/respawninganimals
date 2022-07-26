@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Slice;
 
 @Mixin(TurtleEggBlock.class)
 public abstract class TurtleEggBlockMixin extends Block {
@@ -15,8 +16,8 @@ public abstract class TurtleEggBlockMixin extends Block {
         super(properties);
     }
 
-    @ModifyVariable(method = "randomTick", at = @At("STORE"))
-    public Turtle randomTick$modify$store(Turtle turtle) {
+    @ModifyVariable(method = "randomTick", at = @At("LOAD"), slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/Turtle;moveTo(DDDFF)V")))
+    public Turtle randomTick$modify$load(Turtle turtle) {
         // enable persistence for baby turtles
         turtle.setPersistenceRequired();
         return turtle;

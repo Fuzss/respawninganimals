@@ -2,7 +2,7 @@ package fuzs.respawninganimals.mixin;
 
 import fuzs.respawninganimals.RespawningAnimals;
 import fuzs.respawninganimals.config.ServerConfig;
-import fuzs.respawninganimals.element.RespawnableAnimalsElement;
+import fuzs.respawninganimals.handler.AnimalSpawningHandler;
 import fuzs.respawninganimals.init.ModRegistry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.DifficultyInstance;
@@ -35,8 +35,7 @@ public abstract class MobMixin extends LivingEntity {
 
     @Inject(method = "checkDespawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/MobEntity;removeWhenFarAway(D)Z"), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
     public void checkDespawn$inject$invoke(Entity player, double distanceToClosestPlayer, CallbackInfo callback) {
-        Mob mob = (Mob) (Object) this;
-        if (!this.removeWhenFarAway(distanceToClosestPlayer) && RespawnableAnimalsElement.canAnimalDespawn(mob, distanceToClosestPlayer)) {
+        if (!this.removeWhenFarAway(distanceToClosestPlayer) && AnimalSpawningHandler.canAnimalDespawn((Mob) (Object) this, distanceToClosestPlayer)) {
             this.discard();
             callback.cancel();
         }

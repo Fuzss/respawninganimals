@@ -14,15 +14,10 @@ public class RespawningAnimals implements ModConstructor {
     public static final Logger LOGGER = LogManager.getLogger(MOD_NAME);
 
     @SuppressWarnings("Convert2MethodRef")
-    public static final ConfigHolderV2 CONFIG = CoreServices.FACTORIES.server(ServerConfig.class, () -> new ServerConfig());
+    public static final ConfigHolderV2 CONFIG = CoreServices.FACTORIES.serverConfig(ServerConfig.class, () -> new ServerConfig());
 
     @Override
     public void onConstructMod() {
         CONFIG.bakeConfigs(MOD_ID);
-        registerHandlers();
-    }
-
-    private static void registerHandlers() {
-
     }
 }
