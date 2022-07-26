@@ -1,0 +1,24 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_17",
+  "package": "fuzs.respawninganimals.mixin",
+  "refmap": "respawninganimals.refmap.json",
+  "mixins": [
+    "AnimalEntityMixin",
+    "BeehiveTreeDecoratorMixin",
+    "EntityDensityManagerMixin",
+    "GameRulesMixin",
+    "MobEntityMixin",
+    "PlayerEntityMixin",
+    "TurtleEggBlockMixin",
+    "WanderingTraderSpawnerMixin",
+    "WorldEntitySpawnerMixin",
+    "accessor.BooleanValueAccessor"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
