@@ -33,8 +33,11 @@ public abstract class MobMixin extends LivingEntity {
     @Shadow
     public abstract boolean removeWhenFarAway(double distanceToClosestPlayer);
 
-    @Inject(method = "checkDespawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/MobEntity;removeWhenFarAway(D)Z"), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
-    public void checkDespawn$inject$invoke(Entity player, double distanceToClosestPlayer, CallbackInfo callback) {
+    @Inject(method = "checkDespawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Mob;removeWhenFarAway(D)Z"), cancellable = true)
+    public void checkDespawn$inject$invoke(CallbackInfo callback) {
+        // be careful here, Forge hooks into the method early (don't capture locals)
+        Entity entity = this.level.getNearestPlayer(this, -1.0);
+        double distanceToClosestPlayer = entity.distanceToSqr(this);
         if (!this.removeWhenFarAway(distanceToClosestPlayer) && AnimalSpawningHandler.canAnimalDespawn((Mob) (Object) this, distanceToClosestPlayer)) {
             this.discard();
             callback.cancel();

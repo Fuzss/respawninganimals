@@ -4,6 +4,7 @@ import fuzs.puzzleslib.config.ConfigHolderV2;
 import fuzs.puzzleslib.core.CoreServices;
 import fuzs.puzzleslib.core.ModConstructor;
 import fuzs.respawninganimals.config.ServerConfig;
+import fuzs.respawninganimals.init.ModRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,5 +20,6 @@ public class RespawningAnimals implements ModConstructor {
     @Override
     public void onConstructMod() {
         CONFIG.bakeConfigs(MOD_ID);
+        ModRegistry.touch();
     }
 }

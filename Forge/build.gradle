@@ -46,6 +46,7 @@ minecraft {
             property 'terminal.ansi', 'true'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+            property 'mixin.debug.export', 'true'
             mods {
                 modClientRun {
                     source sourceSets.main
@@ -69,6 +70,7 @@ minecraft {
             property 'terminal.ansi', 'true'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+            property 'mixin.debug.export', 'true'
             mods {
                 modServerRun {
                     source sourceSets.main
@@ -92,6 +94,7 @@ minecraft {
             property 'terminal.ansi', 'true'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+            property 'mixin.debug.export', 'true'
             mods {
                 modDataRun {
                     source sourceSets.main

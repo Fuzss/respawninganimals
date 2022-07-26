@@ -32,7 +32,7 @@ public class AnimalSpawningHandler {
         animal.setPersistenceRequired();
     }
 
-    public void onEntityJoinWorld(Entity entity, Level level) {
+    public void onEntityJoinLevel(Entity entity, Level level) {
         // make skeleton horse spawned as trap persistent by default
         // only really needed for single one spawned with lightning bolt, the ones from activating the trap are persistent by default for some reason
         if (entity instanceof SkeletonHorse skeletonHorse &&skeletonHorse.isTrap()) {
@@ -40,7 +40,7 @@ public class AnimalSpawningHandler {
         }
     }
 
-    public boolean onCheckSpawn(Mob mob, LevelAccessor level, double x, double y, double z, @Nullable BaseSpawner spawner, MobSpawnType spawnReason) {
+    public boolean onCheckSpawn(Mob mob, LevelAccessor level, double x, double y, double z, MobSpawnType spawnReason) {
         if (!(level instanceof ServerLevelAccessor levelAccessor)) return true;
         ServerLevel serverWorld = levelAccessor.getLevel();
         if (spawnReason == MobSpawnType.CHUNK_GENERATION || spawnReason == MobSpawnType.NATURAL) {
@@ -64,11 +64,11 @@ public class AnimalSpawningHandler {
         return serverLevel.getNearestPlayer(x, y, z, -1.0, false).distanceToSqr(x, y, z);
     }
 
-    private boolean canSpawn(ServerLevel serverWorld, Mob entity, double distanceToClosestPlayer) {
-        if (distanceToClosestPlayer > entity.getType().getCategory().getDespawnDistance() * entity.getType().getCategory().getDespawnDistance() && canAnimalDespawn(entity, distanceToClosestPlayer)) {
+    private boolean canSpawn(ServerLevel serverWorld, Mob mob, double distanceToClosestPlayer) {
+        if (distanceToClosestPlayer > mob.getType().getCategory().getDespawnDistance() * mob.getType().getCategory().getDespawnDistance() && canAnimalDespawn(mob, distanceToClosestPlayer)) {
             return false;
         } else {
-            return entity.checkSpawnRules(serverWorld, MobSpawnType.NATURAL) && entity.checkSpawnObstruction(serverWorld);
+            return mob.checkSpawnRules(serverWorld, MobSpawnType.NATURAL) && mob.checkSpawnObstruction(serverWorld);
         }
     }
 

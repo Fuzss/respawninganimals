@@ -31,10 +31,10 @@ public class RespawningAnimalsForge {
             animalSpawningHandler.onAnimalTame(evt.getAnimal(), evt.getTamer());
         });
         MinecraftForge.EVENT_BUS.addListener((final EntityJoinLevelEvent evt) -> {
-            animalSpawningHandler.onEntityJoinWorld(evt.getEntity(), evt.getLevel());
+            animalSpawningHandler.onEntityJoinLevel(evt.getEntity(), evt.getLevel());
         });
         MinecraftForge.EVENT_BUS.addListener((final LivingSpawnEvent.CheckSpawn evt) -> {
-            boolean result = animalSpawningHandler.onCheckSpawn(evt.getEntity(), evt.getLevel(), evt.getX(), evt.getY(), evt.getZ(), evt.getSpawner(), evt.getSpawnReason());
+            boolean result = animalSpawningHandler.onCheckSpawn(evt.getEntity(), evt.getLevel(), evt.getX(), evt.getY(), evt.getZ(), evt.getSpawnReason());
             if (!result) evt.setResult(Event.Result.DENY);
         });
     }
