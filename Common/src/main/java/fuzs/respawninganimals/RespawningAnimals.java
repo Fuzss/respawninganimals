@@ -1,6 +1,6 @@
 package fuzs.respawninganimals;
 
-import fuzs.puzzleslib.config.ConfigHolderV2;
+import fuzs.puzzleslib.config.ConfigHolder;
 import fuzs.puzzleslib.core.CoreServices;
 import fuzs.puzzleslib.core.ModConstructor;
 import fuzs.respawninganimals.config.ServerConfig;
@@ -15,7 +15,7 @@ public class RespawningAnimals implements ModConstructor {
     public static final Logger LOGGER = LogManager.getLogger(MOD_NAME);
 
     @SuppressWarnings("Convert2MethodRef")
-    public static final ConfigHolderV2 CONFIG = CoreServices.FACTORIES.serverConfig(ServerConfig.class, () -> new ServerConfig());
+    public static final ConfigHolder CONFIG = CoreServices.FACTORIES.serverConfig(ServerConfig.class, () -> new ServerConfig());
 
     @Override
     public void onConstructMod() {

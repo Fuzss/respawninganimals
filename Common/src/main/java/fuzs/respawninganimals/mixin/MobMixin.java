@@ -18,7 +18,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(Mob.class)
 public abstract class MobMixin extends LivingEntity {
@@ -47,18 +46,18 @@ public abstract class MobMixin extends LivingEntity {
     @Inject(method = "requiresCustomPersistence", at = @At("HEAD"), cancellable = true)
     public void requiresCustomPersistence$inject$head(CallbackInfoReturnable<Boolean> callback) {
         if (!this.level.getGameRules().getBoolean(ModRegistry.PERSISTENT_ANIMALS_GAME_RULE) && (Mob) (Object) this instanceof Animal animal) {
-            if (RespawningAnimals.CONFIG.get(ServerConfig.class).animalBlacklist.contains(animal.getType()) && canDespawnBePrevented$custom(animal)) {
+            if (RespawningAnimals.CONFIG.get(ServerConfig.class).animalBlacklist.contains(animal.getType()) && this.custom$canDespawnBePrevented()) {
                 callback.setReturnValue(true);
             }
         }
     }
 
     @Unique
-    private static boolean canDespawnBePrevented$custom(Mob mob) {
-        Entity closestPlayer = mob.level.getNearestPlayer(mob, -1.0);
+    private boolean custom$canDespawnBePrevented() {
+        Entity closestPlayer = this.level.getNearestPlayer(this, -1.0);
         if (closestPlayer != null) {
-            double distanceToPlayer = mob.distanceToSqr(mob);
-            return !mob.removeWhenFarAway(distanceToPlayer);
+            double distanceToPlayer = this.distanceToSqr(closestPlayer);
+            return !this.removeWhenFarAway(distanceToPlayer);
         }
         return true;
     }
