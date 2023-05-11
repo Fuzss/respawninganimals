@@ -8,8 +8,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 
-import javax.annotation.Nonnull;
-
 @Mixin(Player.class)
 public abstract class PlayerMixin extends LivingEntity {
 
@@ -18,10 +16,10 @@ public abstract class PlayerMixin extends LivingEntity {
     }
 
     @Override
-    public boolean startRiding(@Nonnull Entity entityIn, boolean force) {
-        boolean flag = super.startRiding(entityIn, force);
+    public boolean startRiding(Entity vehicle, boolean force) {
+        boolean flag = super.startRiding(vehicle, force);
         // make all mobs ridden by player persistent
-        if (flag && entityIn instanceof Animal animal) animal.setPersistenceRequired();
+        if (flag && vehicle instanceof Animal animal) animal.setPersistenceRequired();
         return flag;
     }
 }

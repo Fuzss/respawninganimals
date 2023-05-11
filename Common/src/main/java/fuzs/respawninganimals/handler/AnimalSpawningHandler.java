@@ -1,6 +1,8 @@
 package fuzs.respawninganimals.handler;
 
-import fuzs.puzzleslib.core.CoreServices;
+import fuzs.puzzleslib.api.core.v1.ModLoaderEnvironment;
+import fuzs.puzzleslib.api.event.v1.core.EventResult;
+import fuzs.puzzleslib.api.event.v1.data.MutableValue;
 import fuzs.respawninganimals.RespawningAnimals;
 import fuzs.respawninganimals.config.ServerConfig;
 import fuzs.respawninganimals.init.ModRegistry;
@@ -10,61 +12,54 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Pig;
 import net.minecraft.world.entity.animal.horse.SkeletonHorse;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.BaseSpawner;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.Nullable;
 
 public class AnimalSpawningHandler {
 
-    public void onBabyEntitySpawn(Mob parentA, Mob parentB, @Nullable AgeableMob child) {
+    public static EventResult onBabyEntitySpawn(Mob animal, Mob partner, MutableValue<AgeableMob> child) {
         // make freshly born baby animals persistent
-        if (child != null) child.setPersistenceRequired();
+        if (child.get() != null) child.get().setPersistenceRequired();
         // environmental makes pigs spawn multiple piglets
-        if (CoreServices.ENVIRONMENT.isModLoaded("environmental") && parentA instanceof Pig) {
-            parentA.level.getEntitiesOfClass(Pig.class, parentA.getBoundingBox(), AgeableMob::isBaby).forEach(Mob::setPersistenceRequired);
+        if (animal instanceof Pig && ModLoaderEnvironment.INSTANCE.isModLoaded("environmental")) {
+            animal.level.getEntitiesOfClass(Pig.class, animal.getBoundingBox(), AgeableMob::isBaby).forEach(Mob::setPersistenceRequired);
         }
+        return EventResult.PASS;
     }
 
-    public void onAnimalTame(Animal animal, Player tamer) {
+    public static EventResult onAnimalTame(Animal animal, Player player) {
         // enable persistence for animals that have been tamed (cats, ocelots, wolves, and all horse types including llamas)
         animal.setPersistenceRequired();
+        return EventResult.PASS;
     }
 
-    public void onEntityJoinLevel(Entity entity, Level level) {
+    public static EventResult onEntityJoinLevel(Entity entity, ServerLevel level, @Nullable MobSpawnType spawnType) {
         // make skeleton horse spawned as trap persistent by default
         // only really needed for single one spawned with lightning bolt, the ones from activating the trap are persistent by default for some reason
-        if (entity instanceof SkeletonHorse skeletonHorse &&skeletonHorse.isTrap()) {
+        if (entity instanceof SkeletonHorse skeletonHorse && skeletonHorse.isTrap()) {
             skeletonHorse.setPersistenceRequired();
         }
-    }
-
-    public boolean onCheckSpawn(Mob mob, LevelAccessor level, double x, double y, double z, MobSpawnType spawnReason) {
-        if (!(level instanceof ServerLevelAccessor levelAccessor)) return true;
-        ServerLevel serverWorld = levelAccessor.getLevel();
-        if (spawnReason == MobSpawnType.CHUNK_GENERATION || spawnReason == MobSpawnType.NATURAL) {
-            if (mob instanceof Animal && mob.getType().getCategory() == MobCategory.CREATURE) {
+        if (spawnType == MobSpawnType.CHUNK_GENERATION || spawnType == MobSpawnType.NATURAL) {
+            if (entity instanceof Animal animal && entity.getType().getCategory() == MobCategory.CREATURE) {
                 // prevent animals from being spawned on world creation, but exclude blacklisted animals
-                if (!serverWorld.getGameRules().getBoolean(ModRegistry.PERSISTENT_ANIMALS_GAME_RULE) && !RespawningAnimals.CONFIG.get(ServerConfig.class).animalBlacklist.contains(mob.getType())) {
-                    if (spawnReason == MobSpawnType.CHUNK_GENERATION) {
-                        return false;
+                if (!level.getGameRules().getBoolean(ModRegistry.PERSISTENT_ANIMALS_GAME_RULE) && !RespawningAnimals.CONFIG.get(ServerConfig.class).animalBlacklist.contains(entity.getType())) {
+                    if (spawnType == MobSpawnType.CHUNK_GENERATION) {
+                        return EventResult.INTERRUPT;
                     } else {
                         // prevent animals from being spawned when too far away from the closest player
-                        double distanceToClosestPlayer = this.getPlayerDistance(serverWorld, x, y, z);
-                        return this.canSpawn(serverWorld, mob, distanceToClosestPlayer);
+                        double distanceToPlayer = getDistanceToPlayer(level, entity.getX(), entity.getY(), entity.getZ());
+                        return canSpawn(level, animal, distanceToPlayer) ? EventResult.PASS : EventResult.INTERRUPT;
                     }
                 }
             }
         }
-        return true;
+        return EventResult.PASS;
     }
 
-    private double getPlayerDistance(ServerLevel serverLevel, double x, double y, double z) {
+    private static double getDistanceToPlayer(ServerLevel serverLevel, double x, double y, double z) {
         return serverLevel.getNearestPlayer(x, y, z, -1.0, false).distanceToSqr(x, y, z);
     }
 
-    private boolean canSpawn(ServerLevel serverWorld, Mob mob, double distanceToClosestPlayer) {
+    private static boolean canSpawn(ServerLevel serverWorld, Mob mob, double distanceToClosestPlayer) {
         if (distanceToClosestPlayer > mob.getType().getCategory().getDespawnDistance() * mob.getType().getCategory().getDespawnDistance() && canAnimalDespawn(mob, distanceToClosestPlayer)) {
             return false;
         } else {
