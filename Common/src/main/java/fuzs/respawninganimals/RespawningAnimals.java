@@ -2,7 +2,7 @@ package fuzs.respawninganimals;
 
 import fuzs.puzzleslib.api.config.v3.ConfigHolder;
 import fuzs.puzzleslib.api.core.v1.ModConstructor;
-import fuzs.puzzleslib.api.event.v1.entity.EntityLevelEvents;
+import fuzs.puzzleslib.api.event.v1.entity.ServerEntityLevelEvents;
 import fuzs.puzzleslib.api.event.v1.entity.living.AnimalTameCallback;
 import fuzs.puzzleslib.api.event.v1.entity.living.BabyEntitySpawnCallback;
 import fuzs.respawninganimals.config.ServerConfig;
@@ -26,6 +26,6 @@ public class RespawningAnimals implements ModConstructor {
     private static void registerHandlers() {
         BabyEntitySpawnCallback.EVENT.register(AnimalSpawningHandler::onBabyEntitySpawn);
         AnimalTameCallback.EVENT.register(AnimalSpawningHandler::onAnimalTame);
-        EntityLevelEvents.LOAD.register(AnimalSpawningHandler::onEntityJoinLevel);
+        ServerEntityLevelEvents.LOAD.register(AnimalSpawningHandler::onEntityJoinLevel);
     }
 }
