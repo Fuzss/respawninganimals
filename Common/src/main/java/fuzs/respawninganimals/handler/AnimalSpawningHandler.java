@@ -21,7 +21,7 @@ public class AnimalSpawningHandler {
         if (child.get() != null) child.get().setPersistenceRequired();
         // environmental makes pigs spawn multiple piglets
         if (animal instanceof Pig && ModLoaderEnvironment.INSTANCE.isModLoaded("environmental")) {
-            animal.level.getEntitiesOfClass(Pig.class, animal.getBoundingBox(), AgeableMob::isBaby).forEach(Mob::setPersistenceRequired);
+            animal.level().getEntitiesOfClass(Pig.class, animal.getBoundingBox(), AgeableMob::isBaby).forEach(Mob::setPersistenceRequired);
         }
         return EventResult.PASS;
     }
@@ -56,11 +56,12 @@ public class AnimalSpawningHandler {
     }
 
     private static double getDistanceToPlayer(ServerLevel serverLevel, double x, double y, double z) {
-        return serverLevel.getNearestPlayer(x, y, z, -1.0, false).distanceToSqr(x, y, z);
+        Player nearestPlayer = serverLevel.getNearestPlayer(x, y, z, -1.0, false);
+        return nearestPlayer != null ? nearestPlayer.distanceToSqr(x, y, z) : Double.MAX_VALUE;
     }
 
-    private static boolean canSpawn(ServerLevel serverWorld, Mob mob, double distanceToClosestPlayer) {
-        if (distanceToClosestPlayer > mob.getType().getCategory().getDespawnDistance() * mob.getType().getCategory().getDespawnDistance() && canAnimalDespawn(mob, distanceToClosestPlayer)) {
+    private static boolean canSpawn(ServerLevel serverWorld, Mob mob, double distance) {
+        if (distance > mob.getType().getCategory().getDespawnDistance() * mob.getType().getCategory().getDespawnDistance() && canAnimalDespawn(mob, distance)) {
             return false;
         } else {
             return mob.checkSpawnRules(serverWorld, MobSpawnType.NATURAL) && mob.checkSpawnObstruction(serverWorld);
@@ -70,7 +71,7 @@ public class AnimalSpawningHandler {
     public static boolean canAnimalDespawn(Mob mob, double distanceToClosestPlayer) {
         // replace canDespawn call, as injecting into the base method directly is not sufficient as it is overridden by many sub classes
         // special behavior such as blacklist is handled in preventDespawn injector
-        if (!mob.level.getGameRules().getBoolean(ModRegistry.PERSISTENT_ANIMALS_GAME_RULE)) {
+        if (!mob.level().getGameRules().getBoolean(ModRegistry.PERSISTENT_ANIMALS_GAME_RULE)) {
             return mob instanceof Animal && mob.getType().getCategory() == MobCategory.CREATURE && (!(mob instanceof TamableAnimal) || !((TamableAnimal) mob).isTame()) || mob.removeWhenFarAway(distanceToClosestPlayer);
         }
         return mob.removeWhenFarAway(distanceToClosestPlayer);
