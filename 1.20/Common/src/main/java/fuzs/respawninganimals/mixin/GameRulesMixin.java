@@ -20,7 +20,7 @@ abstract class GameRulesMixin {
     private Map<GameRules.Key<?>, GameRules.Value<?>> rules;
 
     @Inject(method = "<init>(Lcom/mojang/serialization/DynamicLike;)V", at = @At("TAIL"))
-    public void init$inject4tail(DynamicLike<?> dynamic, CallbackInfo callback) {
+    public void init(DynamicLike<?> dynamic, CallbackInfo callback) {
         // if the gamerule is not present (this is a world which has been loaded without the mod before) set value
         // to true instead of default false to prevent unwanted behavior such as animals vanishing from farms
         Optional<String> result = dynamic.get(ModRegistry.PERSISTENT_ANIMALS_GAME_RULE.getId()).asString().result();
