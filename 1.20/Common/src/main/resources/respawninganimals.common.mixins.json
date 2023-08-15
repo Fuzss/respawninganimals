@@ -6,16 +6,7 @@
   "refmap": "respawninganimals.refmap.json",
   "plugin": "fuzs.respawninganimals.mixin.ModMixinConfigPlugin",
   "mixins": [
-    "AnimalMixin",
-    "BeehiveBlockEntityMixin",
-    "GameRulesMixin",
-    "MobCategoryMixin",
-    "MobMixin",
-    "NaturalSpawnerMixin",
-    "PlayerMixin",
-    "TurtleEggBlockMixin",
-    "WanderingTraderSpawnerMixin",
-    "accessor.SpawnStateAccessor"
+    "accessor.MobCategoryAccessor"
   ],
   "client": [
   ],

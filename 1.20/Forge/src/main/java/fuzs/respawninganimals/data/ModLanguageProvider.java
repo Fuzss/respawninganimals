@@ -1,12 +1,12 @@
 package fuzs.respawninganimals.data;
 
 import fuzs.puzzleslib.api.data.v1.AbstractLanguageProvider;
-import net.minecraft.data.PackOutput;
+import net.minecraftforge.data.event.GatherDataEvent;
 
 public class ModLanguageProvider extends AbstractLanguageProvider {
 
-    public ModLanguageProvider(PackOutput packOutput, String modId) {
-        super(packOutput, modId);
+    public ModLanguageProvider(GatherDataEvent evt, String modId) {
+        super(evt, modId);
     }
 
     @Override
