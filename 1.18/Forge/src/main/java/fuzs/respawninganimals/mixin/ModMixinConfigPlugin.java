@@ -1,4 +1,4 @@
-package fuzs.examplemod.mixin;
+package fuzs.respawninganimals.mixin;
 
 import net.minecraftforge.fml.loading.FMLLoader;
 import org.objectweb.asm.tree.ClassNode;

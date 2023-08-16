@@ -26,13 +26,11 @@
       "${mainEntryPoint}"
     ],
     "client": [
-      "${clientEntryPoint}"
     ]
   },
 
   "mixins": [
-    "${modId}.common.mixins.json",
-    "${modId}.fabric.mixins.json"
+    "${modId}.common.mixins.json"
   ],
 
   "depends": {

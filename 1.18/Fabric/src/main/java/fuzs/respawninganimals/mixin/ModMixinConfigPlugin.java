@@ -1,4 +1,4 @@
-package fuzs.examplemod.mixin;
+package fuzs.respawninganimals.mixin;
 
 import net.fabricmc.loader.api.FabricLoader;
 import org.objectweb.asm.tree.ClassNode;
