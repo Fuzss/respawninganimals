@@ -12,7 +12,7 @@ public class AnimalPersistenceHandler {
 
     public static EventResult onAnimalTame(Animal animal, Player player) {
         // enable persistence for animals that have been tamed (cats, ocelots, wolves, and all horse types including llamas)
-        if (AnimalSpawningHandler.shouldHandleMobDespawning(animal, animal.level)) {
+        if (AnimalSpawningHandler.shouldHandleMobDespawning(animal)) {
             animal.setPersistenceRequired();
         }
         return EventResult.PASS;
@@ -21,7 +21,7 @@ public class AnimalPersistenceHandler {
     public static EventResult onLivingTick(LivingEntity entity) {
         // make animals in love persistent
         if (entity instanceof Animal animal && animal.isInLove()) {
-            if (AnimalSpawningHandler.shouldHandleMobDespawning(animal, animal.level)) {
+            if (AnimalSpawningHandler.shouldHandleMobDespawning(animal)) {
                 animal.setPersistenceRequired();
             }
         }
@@ -30,7 +30,7 @@ public class AnimalPersistenceHandler {
 
     public static EventResult onStartRiding(Level level, Entity rider, Entity vehicle) {
         // make mobs the player has ridden persistent
-        if (vehicle instanceof Mob mob && AnimalSpawningHandler.shouldHandleMobDespawning(mob, level)) {
+        if (vehicle instanceof Mob mob && AnimalSpawningHandler.shouldHandleMobDespawning(mob, level.getGameRules())) {
             mob.setPersistenceRequired();
         }
         return EventResult.PASS;

@@ -12,7 +12,7 @@ public class ModRegistry {
     static final RegistryManager REGISTRY = RegistryManager.instant(RespawningAnimals.MOD_ID);
     public static final TagKey<EntityType<?>> PERSISTENT_ANIMALS_ENTITY_TYPE_TAG = REGISTRY.registerEntityTypeTag("persistent_animals");
 
-    public static final GameRules.Key<GameRules.IntegerValue> ANIMAL_MOB_CAP_GAME_RULE = GameRulesFactory.INSTANCE.register("animalMobCap", GameRules.Category.SPAWNING, GameRulesFactory.INSTANCE.createIntRule(18, 0, 100, (server, booleanValue) -> {
+    public static final GameRules.Key<GameRules.IntegerValue> ANIMAL_MOB_CAP_GAME_RULE = GameRulesFactory.INSTANCE.register("animalMobCap", GameRules.Category.SPAWNING, GameRulesFactory.INSTANCE.createIntRule(15, 0, 100, (server, booleanValue) -> {
         AnimalSpawningHandler.setCreatureAttributes(server.getGameRules());
     }));
     public static final GameRules.Key<GameRules.BooleanValue> PERSISTENT_ANIMALS_GAME_RULE = GameRulesFactory.INSTANCE.register("persistentAnimals", GameRules.Category.SPAWNING, GameRulesFactory.INSTANCE.createBooleanRule(false, (server, booleanValue) -> {

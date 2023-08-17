@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog].
 
+## [v8.1.1-1.20.1] - 2023-08-17
+### Changed
+- Made it a lot less likely for Respawning Animals to be responsible for endless animal over-spawning in case of a mod conflict
+
 ## [v8.1.0-1.20.1] - 2023-08-15
 - Completely rewrote the mod to no longer rely on animals being classified as instances of the `Animal` class internally, instead now any mob with the `CREATURE` mob category will be affected fully
 - This should mainly solve issues with modded animals being allowed to constantly spawn in the world without ever being forced to despawn

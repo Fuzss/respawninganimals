@@ -7,10 +7,7 @@ import fuzs.respawninganimals.mixin.accessor.MobCategoryAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
@@ -30,7 +27,7 @@ public class AnimalSpawningHandler {
     }
 
     public static EventResult onCheckMobDespawn(Mob mob, ServerLevel level) {
-        return shouldHandleMobDespawning(mob, level) ? checkDespawn(mob) : EventResult.PASS;
+        return shouldHandleMobDespawning(mob, level.getGameRules()) ? checkDespawn(mob) : EventResult.PASS;
     }
 
     private static EventResult checkDespawn(Mob mob) {
@@ -61,7 +58,7 @@ public class AnimalSpawningHandler {
     public static EventResult onEntitySpawn(Entity entity, ServerLevel level, @Nullable MobSpawnType spawnType) {
         // don't spawn mobs during chunk generation which we would remove again anyway since they are certainly too far from the player
         if (spawnType == MobSpawnType.CHUNK_GENERATION) {
-            if (entity instanceof Mob mob && shouldAffectMob(mob, level.getGameRules())) {
+            if (entity instanceof Mob mob && shouldAffectMob(mob.getType(), level.getGameRules(), mob.getType().getCategory())) {
                 return EventResult.INTERRUPT;
             }
         }
@@ -74,7 +71,7 @@ public class AnimalSpawningHandler {
             // prevent blacklisted animals from being respawned to prevent them from spawning endlessly
             // don't check creature category for the mob type, a mod might have a mismatch there causing issues (mob type on entity type does not match mob type used for world gen spawning)
             mobsAt.removeIf(spawnerData -> {
-                return !level.getGameRules().getBoolean(ModRegistry.PERSISTENT_ANIMALS_GAME_RULE) && spawnerData.type.is(ModRegistry.PERSISTENT_ANIMALS_ENTITY_TYPE_TAG);
+                return !shouldAffectMob(spawnerData.type, level.getGameRules(), null);
             });
         }
     }
@@ -83,21 +80,25 @@ public class AnimalSpawningHandler {
         // find all mobs that would count towards the creature mob cap and therefore would hinder the spawn cycle from spawning new animals
         // making them persistent prevents counting towards the mob cap, otherwise this doesn't really have any implications for us since we ignore those spawn types anyway
         // in vanilla if the mod were to be removed this also has no consequences
-        if (entity instanceof Mob mob && mob.getType().getCategory() == MobCategory.CREATURE && !shouldHandleMobDespawning(mob, level)) {
+        if (entity instanceof Mob mob && mob.getType().getCategory() == MobCategory.CREATURE && !shouldHandleMobDespawning(mob, null)) {
             mob.setPersistenceRequired();
         }
     }
 
-    public static boolean shouldHandleMobDespawning(Mob mob, Level level) {
-        if (!shouldAffectMob(mob, level.getGameRules())) return false;
+    public static boolean shouldHandleMobDespawning(Mob mob) {
+        return shouldHandleMobDespawning(mob, mob.level.getGameRules());
+    }
+
+    public static boolean shouldHandleMobDespawning(Mob mob, @Nullable GameRules gameRules) {
+        if (!shouldAffectMob(mob.getType(), gameRules, mob.getType().getCategory())) return false;
         MobSpawnType spawnType = CommonAbstractions.INSTANCE.getMobSpawnType(mob);
         return spawnType != null && VOLATILE_SPAWN_TYPES.contains(spawnType);
     }
 
-    public static boolean shouldAffectMob(Mob mob, GameRules gameRules) {
-        if (gameRules.getBoolean(ModRegistry.PERSISTENT_ANIMALS_GAME_RULE) || mob.getType().is(ModRegistry.PERSISTENT_ANIMALS_ENTITY_TYPE_TAG)) return false;
-        // make sure to test if mob can actually never despawn (based on distance at least)
-        return mob.getType().getCategory() == MobCategory.CREATURE && !mob.removeWhenFarAway(Double.MAX_VALUE);
+    public static boolean shouldAffectMob(EntityType<?> entityType, @Nullable GameRules gameRules, @Nullable MobCategory mobCategory) {
+        if (gameRules != null && gameRules.getBoolean(ModRegistry.PERSISTENT_ANIMALS_GAME_RULE)) return false;
+        if (entityType.is(ModRegistry.PERSISTENT_ANIMALS_ENTITY_TYPE_TAG)) return false;
+        return mobCategory == null || mobCategory == MobCategory.CREATURE;
     }
 
     @SuppressWarnings("DataFlowIssue")
