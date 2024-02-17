@@ -1,5 +1,5 @@
 plugins {
-    id "fabric-loom" version "1.5-SNAPSHOT" apply false
+    alias libs.plugins.loom apply false
     alias libs.plugins.quiltflower apply false
     alias libs.plugins.forgegradle apply false
     alias libs.plugins.mixin apply false
