@@ -1,19 +1,20 @@
 package fuzs.respawninganimals.data;
 
-import fuzs.puzzleslib.api.data.v1.AbstractTagProvider;
+import fuzs.puzzleslib.api.data.v2.AbstractTagProvider;
+import fuzs.puzzleslib.api.data.v2.core.DataProviderContext;
 import fuzs.respawninganimals.init.ModRegistry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.data.event.GatherDataEvent;
 
 public class ModEntityTypesTagProvider extends AbstractTagProvider.EntityTypes {
 
-    public ModEntityTypesTagProvider(GatherDataEvent evt, String modId) {
-        super(evt, modId);
+    public ModEntityTypesTagProvider(DataProviderContext context) {
+        super(context);
     }
 
     @Override
-    protected void addTags(HolderLookup.Provider provider) {
+    public void addTags(HolderLookup.Provider provider) {
+        // maulers are made persistent in Mob::finalizeSpawn which they really shouldn't be, but this way we can handle that
         this.tag(ModRegistry.PERSISTENT_ANIMALS_ENTITY_TYPE_TAG).addOptional(new ResourceLocation("friendsandfoes:mauler"));
     }
 }
