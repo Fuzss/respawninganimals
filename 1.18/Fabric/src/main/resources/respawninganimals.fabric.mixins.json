@@ -6,14 +6,7 @@
   "refmap": "respawninganimals.refmap.json",
   "plugin": "fuzs.respawninganimals.mixin.ModMixinConfigPlugin",
   "mixins": [
-    "BaseSpawnerFabricMixin",
-    "EntityTypeFabricMixin",
-    "GameRulesMixin",
-    "MobFabricMixin",
-    "NaturalSpawnerMixin",
-    "SummonCommandFabricMixin",
-    "accessor.EntityTypeAccessor",
-    "accessor.MobCategoryAccessor"
+    "NaturalSpawnerFabricMixin"
   ],
   "client": [
   ],
