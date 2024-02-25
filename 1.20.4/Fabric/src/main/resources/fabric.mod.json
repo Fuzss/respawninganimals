@@ -9,7 +9,7 @@
   "authors": [
     "${modAuthor}"
   ],
-  
+
   "contact": {
     "homepage": "${modPageUrl}",
     "issues": "${modIssueUrl}",
@@ -26,6 +26,7 @@
       "${mainEntryPoint}"
     ],
     "client": [
+      "${clientEntryPoint}"
     ]
   },
 

@@ -1,6 +1,6 @@
 package fuzs.respawninganimals.init;
 
-import fuzs.puzzleslib.api.init.v2.GameRulesFactory;
+import fuzs.puzzleslib.api.init.v3.GameRulesFactory;
 import fuzs.puzzleslib.api.init.v3.tags.BoundTagFactory;
 import fuzs.respawninganimals.RespawningAnimals;
 import fuzs.respawninganimals.handler.AnimalSpawningHandler;

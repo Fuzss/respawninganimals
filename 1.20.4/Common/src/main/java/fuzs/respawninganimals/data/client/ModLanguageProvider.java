@@ -11,7 +11,7 @@ public class ModLanguageProvider extends AbstractLanguageProvider {
     }
 
     @Override
-    protected void addTranslations(TranslationBuilder builder) {
+    public void addTranslations(TranslationBuilder builder) {
         builder.add(ModRegistry.PERSISTENT_ANIMALS_GAME_RULE, "Persistent animals");
         builder.addGameRuleDescription(ModRegistry.PERSISTENT_ANIMALS_GAME_RULE, "Animals will stay in the world forever and can only be reproduced from breeding.");
         builder.add(ModRegistry.ANIMAL_MOB_CAP_GAME_RULE, "Animal mob cap");

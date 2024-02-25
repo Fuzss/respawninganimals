@@ -5,7 +5,7 @@ import fuzs.puzzleslib.api.event.v1.entity.EntityRidingEvents;
 import fuzs.puzzleslib.api.event.v1.entity.ServerEntityLevelEvents;
 import fuzs.puzzleslib.api.event.v1.entity.living.AnimalTameCallback;
 import fuzs.puzzleslib.api.event.v1.entity.living.CheckMobDespawnCallback;
-import fuzs.puzzleslib.api.event.v1.entity.living.LivingEvents;
+import fuzs.puzzleslib.api.event.v1.entity.living.LivingTickCallback;
 import fuzs.puzzleslib.api.event.v1.level.GatherPotentialSpawnsCallback;
 import fuzs.puzzleslib.api.event.v1.level.ServerLevelEvents;
 import fuzs.respawninganimals.handler.AnimalPersistenceHandler;
@@ -27,11 +27,11 @@ public class RespawningAnimals implements ModConstructor {
     }
 
     private static void registerHandlers() {
-        LivingEvents.TICK.register(AnimalPersistenceHandler::onLivingTick);
+        LivingTickCallback.EVENT.register(AnimalPersistenceHandler::onLivingTick);
         AnimalTameCallback.EVENT.register(AnimalPersistenceHandler::onAnimalTame);
         EntityRidingEvents.START.register(AnimalPersistenceHandler::onStartRiding);
         CheckMobDespawnCallback.EVENT.register(AnimalSpawningHandler::onCheckMobDespawn);
-        ServerEntityLevelEvents.LOAD_V2.register(AnimalSpawningHandler::onEntityLoad);
+        ServerEntityLevelEvents.LOAD.register(AnimalSpawningHandler::onEntityLoad);
         ServerEntityLevelEvents.SPAWN.register(AnimalSpawningHandler::onEntitySpawn);
         ServerLevelEvents.LOAD.register(AnimalSpawningHandler::onLevelLoad);
         GatherPotentialSpawnsCallback.EVENT.register(AnimalSpawningHandler::onGatherPotentialSpawns);

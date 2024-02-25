@@ -1,10 +1,10 @@
 package fuzs.respawninganimals.handler;
 
+import fuzs.puzzleslib.api.core.v1.CommonAbstractions;
 import fuzs.puzzleslib.api.core.v1.ModContainer;
 import fuzs.puzzleslib.api.core.v1.ModLoaderEnvironment;
 import fuzs.puzzleslib.api.event.v1.core.EventResult;
 import fuzs.respawninganimals.RespawningAnimals;
-import fuzs.respawninganimals.core.CommonAbstractions;
 import fuzs.respawninganimals.init.ModRegistry;
 import fuzs.respawninganimals.mixin.accessor.EntityTypeAccessor;
 import fuzs.respawninganimals.mixin.accessor.MobCategoryAccessor;
