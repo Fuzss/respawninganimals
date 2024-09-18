@@ -1,11 +1,12 @@
 package fuzs.respawninganimals;
 
 import fuzs.puzzleslib.api.core.v1.ModConstructor;
+import fuzs.puzzleslib.api.core.v1.utility.ResourceLocationHelper;
 import fuzs.puzzleslib.api.event.v1.entity.EntityRidingEvents;
+import fuzs.puzzleslib.api.event.v1.entity.EntityTickEvents;
 import fuzs.puzzleslib.api.event.v1.entity.ServerEntityLevelEvents;
 import fuzs.puzzleslib.api.event.v1.entity.living.AnimalTameCallback;
 import fuzs.puzzleslib.api.event.v1.entity.living.CheckMobDespawnCallback;
-import fuzs.puzzleslib.api.event.v1.entity.living.LivingTickCallback;
 import fuzs.puzzleslib.api.event.v1.level.GatherPotentialSpawnsCallback;
 import fuzs.puzzleslib.api.event.v1.level.ServerLevelEvents;
 import fuzs.respawninganimals.handler.AnimalPersistenceHandler;
@@ -23,11 +24,11 @@ public class RespawningAnimals implements ModConstructor {
     @Override
     public void onConstructMod() {
         ModRegistry.touch();
-        registerHandlers();
+        registerEventHandlers();
     }
 
-    private static void registerHandlers() {
-        LivingTickCallback.EVENT.register(AnimalPersistenceHandler::onLivingTick);
+    private static void registerEventHandlers() {
+        EntityTickEvents.END.register(AnimalPersistenceHandler::onEndEntityTick);
         AnimalTameCallback.EVENT.register(AnimalPersistenceHandler::onAnimalTame);
         EntityRidingEvents.START.register(AnimalPersistenceHandler::onStartRiding);
         CheckMobDespawnCallback.EVENT.register(AnimalSpawningHandler::onCheckMobDespawn);
@@ -38,6 +39,6 @@ public class RespawningAnimals implements ModConstructor {
     }
 
     public static ResourceLocation id(String path) {
-        return new ResourceLocation(MOD_ID, path);
+        return ResourceLocationHelper.fromNamespaceAndPath(MOD_ID, path);
     }
 }

@@ -30,7 +30,7 @@ public class AnimalPersistenceHandler {
         });
     }
 
-    public static EventResult onLivingTick(LivingEntity entity) {
+    public static void onEndEntityTick(Entity entity) {
         if (entity instanceof Mob mob && !mob.isPersistenceRequired() && AnimalSpawningHandler.isAllowedToDespawn(mob, mob.level().getGameRules())) {
             for (Predicate<Mob> mobPredicate : TICK_PREDICATES) {
                 if (mobPredicate.test(mob)) {
@@ -39,7 +39,6 @@ public class AnimalPersistenceHandler {
                 }
             }
         }
-        return EventResult.PASS;
     }
 
     public static EventResult onAnimalTame(Animal animal, Player player) {
