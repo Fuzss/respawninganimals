@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog].
 
+## [v8.2.1-1.20.1] - 2024-12-23
+### Fixed
+- Fix baby strider jockeys being made persistent, leading to them building up over time
+
 ## [v8.2.0-1.20.1] - 2024-02-17
 ### Changed
 - Improve handling of creatures from mods that register an animal with a mob category that is different from the one used for spawning

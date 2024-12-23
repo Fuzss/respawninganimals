@@ -28,13 +28,10 @@ import java.util.Optional;
 import java.util.Set;
 
 public class AnimalSpawningHandler {
-    private static final Set<MobSpawnType> VOLATILE_SPAWN_TYPES = Set.of(MobSpawnType.NATURAL,
-            MobSpawnType.CHUNK_GENERATION,
-            MobSpawnType.SPAWNER,
-            MobSpawnType.COMMAND,
-            MobSpawnType.SPAWN_EGG,
-            MobSpawnType.DISPENSER
-    );
+    private static final Set<MobSpawnType> PERSISTENT_SPAWN_TYPES = Set.of(MobSpawnType.STRUCTURE,
+            MobSpawnType.BREEDING,
+            MobSpawnType.TRIGGERED,
+            MobSpawnType.BUCKET);
 
     public static void onLevelLoad(MinecraftServer server, ServerLevel level) {
         if (level.dimension() == Level.OVERWORLD) {
@@ -48,9 +45,8 @@ public class AnimalSpawningHandler {
         MobCategoryAccessor.class.cast(MobCategory.CREATURE).respawninganimals$setIsPersistent(persistentAnimals);
         // increase to 18 by default to be more similar to beta era spawning mechanics
         MobCategoryAccessor.class.cast(MobCategory.CREATURE)
-                .respawninganimals$setMax(persistentAnimals ?
-                        10 :
-                        gameRules.getInt(ModRegistry.ANIMAL_MOB_CAP_GAME_RULE));
+                .respawninganimals$setMax(
+                        persistentAnimals ? 10 : gameRules.getInt(ModRegistry.ANIMAL_MOB_CAP_GAME_RULE));
     }
 
     public static EventResult onCheckMobDespawn(Mob mob, ServerLevel level) {
@@ -79,7 +75,7 @@ public class AnimalSpawningHandler {
     public static boolean isAllowedToDespawn(Mob mob, @Nullable GameRules gameRules) {
         if (isAnimalDespawningAllowed(mob.getType(), gameRules, mob.getType().getCategory())) {
             MobSpawnType spawnType = CommonAbstractions.INSTANCE.getMobSpawnType(mob);
-            return spawnType != null && VOLATILE_SPAWN_TYPES.contains(spawnType);
+            return spawnType != null && !PERSISTENT_SPAWN_TYPES.contains(spawnType);
         } else {
             return false;
         }
@@ -141,8 +137,7 @@ public class AnimalSpawningHandler {
                     resourceLocation,
                     entityType.getCategory(),
                     MobCategory.CREATURE,
-                    modName
-            );
+                    modName);
             ((EntityTypeAccessor) entityType).respawninganimals$setCategory(MobCategory.CREATURE);
         }
     }
