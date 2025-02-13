@@ -13,17 +13,17 @@ import fuzs.respawninganimals.handler.AnimalPersistenceHandler;
 import fuzs.respawninganimals.handler.AnimalSpawningHandler;
 import fuzs.respawninganimals.init.ModRegistry;
 import net.minecraft.resources.ResourceLocation;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RespawningAnimals implements ModConstructor {
     public static final String MOD_ID = "respawninganimals";
     public static final String MOD_NAME = "Respawning Animals";
-    public static final Logger LOGGER = LogManager.getLogger(MOD_NAME);
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_NAME);
 
     @Override
     public void onConstructMod() {
-        ModRegistry.touch();
+        ModRegistry.bootstrap();
         registerEventHandlers();
     }
 

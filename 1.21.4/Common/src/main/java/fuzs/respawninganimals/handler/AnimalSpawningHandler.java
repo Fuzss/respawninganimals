@@ -28,10 +28,10 @@ import java.util.Optional;
 import java.util.Set;
 
 public class AnimalSpawningHandler {
-    private static final Set<MobSpawnType> PERSISTENT_SPAWN_TYPES = Set.of(MobSpawnType.STRUCTURE,
-            MobSpawnType.BREEDING,
-            MobSpawnType.TRIGGERED,
-            MobSpawnType.BUCKET);
+    private static final Set<EntitySpawnReason> PERSISTENT_SPAWN_TYPES = Set.of(EntitySpawnReason.STRUCTURE,
+            EntitySpawnReason.BREEDING,
+            EntitySpawnReason.TRIGGERED,
+            EntitySpawnReason.BUCKET);
 
     public static void onLevelLoad(MinecraftServer server, ServerLevel level) {
         if (level.dimension() == Level.OVERWORLD) {
@@ -74,8 +74,8 @@ public class AnimalSpawningHandler {
 
     public static boolean isAllowedToDespawn(Mob mob, @Nullable GameRules gameRules) {
         if (isAnimalDespawningAllowed(mob.getType(), gameRules, mob.getType().getCategory())) {
-            MobSpawnType spawnType = CommonAbstractions.INSTANCE.getMobSpawnType(mob);
-            return spawnType != null && !PERSISTENT_SPAWN_TYPES.contains(spawnType);
+            EntitySpawnReason entitySpawnReason = CommonAbstractions.INSTANCE.getMobSpawnType(mob);
+            return entitySpawnReason == null || !PERSISTENT_SPAWN_TYPES.contains(entitySpawnReason);
         } else {
             return false;
         }
@@ -105,10 +105,10 @@ public class AnimalSpawningHandler {
         }
     }
 
-    public static EventResult onEntitySpawn(Entity entity, ServerLevel level, @Nullable MobSpawnType mobSpawnType) {
+    public static EventResult onEntitySpawn(Entity entity, ServerLevel level, @Nullable EntitySpawnReason entitySpawnReason) {
         if (entity instanceof Mob) {
             // don't spawn mobs during chunk generation which we would remove again anyway since they are certainly too far from the player
-            if (mobSpawnType == MobSpawnType.CHUNK_GENERATION) {
+            if (entitySpawnReason == EntitySpawnReason.CHUNK_GENERATION) {
                 // chunk generation only runs for creature type, so we can safely fix the type if necessary
                 applyCorrectMobCategory(entity.getType());
                 if (isAnimalDespawningAllowed(entity.getType(), level.getGameRules(), MobCategory.CREATURE)) {
