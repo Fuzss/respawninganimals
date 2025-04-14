@@ -1,22 +1,20 @@
 package fuzs.respawninganimals.handler;
 
-import fuzs.puzzleslib.api.core.v1.CommonAbstractions;
 import fuzs.puzzleslib.api.core.v1.ModContainer;
 import fuzs.puzzleslib.api.core.v1.ModLoaderEnvironment;
+import fuzs.puzzleslib.api.entity.v1.EntityHelper;
 import fuzs.puzzleslib.api.event.v1.core.EventResult;
 import fuzs.respawninganimals.RespawningAnimals;
 import fuzs.respawninganimals.init.ModRegistry;
-import fuzs.respawninganimals.mixin.accessor.EntityTypeAccessor;
-import fuzs.respawninganimals.mixin.accessor.MobCategoryAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.random.Weighted;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.chunk.ChunkGenerator;
@@ -33,20 +31,16 @@ public class AnimalSpawningHandler {
             EntitySpawnReason.TRIGGERED,
             EntitySpawnReason.BUCKET);
 
-    public static void onLevelLoad(MinecraftServer server, ServerLevel level) {
-        if (level.dimension() == Level.OVERWORLD) {
-            setCreatureAttributes(level.getGameRules());
-        }
+    public static void onServerStarted(MinecraftServer minecraftServer) {
+        setCreatureAttributes(minecraftServer.getGameRules());
     }
 
     public static void setCreatureAttributes(GameRules gameRules) {
         boolean persistentAnimals = gameRules.getBoolean(ModRegistry.PERSISTENT_ANIMALS_GAME_RULE);
         // this setting removes a 400 tick cooldown between spawn cycles, only creatures have this, all other categories don't
-        MobCategoryAccessor.class.cast(MobCategory.CREATURE).respawninganimals$setIsPersistent(persistentAnimals);
+        MobCategory.CREATURE.isPersistent = persistentAnimals;
         // increase to 18 by default to be more similar to beta era spawning mechanics
-        MobCategoryAccessor.class.cast(MobCategory.CREATURE)
-                .respawninganimals$setMax(
-                        persistentAnimals ? 10 : gameRules.getInt(ModRegistry.ANIMAL_MOB_CAP_GAME_RULE));
+        MobCategory.CREATURE.max = persistentAnimals ? 10 : gameRules.getInt(ModRegistry.ANIMAL_MOB_CAP_GAME_RULE);
     }
 
     public static EventResult onCheckMobDespawn(Mob mob, ServerLevel level) {
@@ -74,8 +68,8 @@ public class AnimalSpawningHandler {
 
     public static boolean isAllowedToDespawn(Mob mob, @Nullable GameRules gameRules) {
         if (isAnimalDespawningAllowed(mob.getType(), gameRules, mob.getType().getCategory())) {
-            EntitySpawnReason entitySpawnReason = CommonAbstractions.INSTANCE.getMobSpawnType(mob);
-            return entitySpawnReason == null || !PERSISTENT_SPAWN_TYPES.contains(entitySpawnReason);
+            EntitySpawnReason entitySpawnReason = EntityHelper.getMobSpawnType(mob);
+            return entitySpawnReason != null && !PERSISTENT_SPAWN_TYPES.contains(entitySpawnReason);
         } else {
             return false;
         }
@@ -98,7 +92,7 @@ public class AnimalSpawningHandler {
         // making them persistent prevents counting towards the mob cap, otherwise this doesn't really have any implications for us since we ignore those spawn types anyway
         // in vanilla if the mod were to be removed this also has no consequences
         if (entity instanceof Mob mob && mob.getType().getCategory() == MobCategory.CREATURE) {
-            // do not check game rule, in case it is toggled on the fly
+            // do not check game rule, in case it is toggled during gameplay
             if (!mob.isPersistenceRequired() && !isAllowedToDespawn(mob, null)) {
                 mob.setPersistenceRequired();
             }
@@ -138,18 +132,20 @@ public class AnimalSpawningHandler {
                     entityType.getCategory(),
                     MobCategory.CREATURE,
                     modName);
-            ((EntityTypeAccessor) entityType).respawninganimals$setCategory(MobCategory.CREATURE);
+            entityType.category = MobCategory.CREATURE;
         }
     }
 
-    public static void onGatherPotentialSpawns(ServerLevel level, StructureManager structureManager, ChunkGenerator chunkGenerator, MobCategory mobCategory, BlockPos blockPos, List<MobSpawnSettings.SpawnerData> mobs) {
+    public static void onGatherPotentialSpawns(ServerLevel level, StructureManager structureManager, ChunkGenerator chunkGenerator, MobCategory mobCategory, BlockPos blockPos, List<Weighted<MobSpawnSettings.SpawnerData>> mobs) {
         if (mobCategory == MobCategory.CREATURE) {
-            Iterator<MobSpawnSettings.SpawnerData> iterator = mobs.iterator();
+            Iterator<Weighted<MobSpawnSettings.SpawnerData>> iterator = mobs.iterator();
             while (iterator.hasNext()) {
-                MobSpawnSettings.SpawnerData spawnerData = iterator.next();
-                applyCorrectMobCategory(spawnerData.type);
+                Weighted<MobSpawnSettings.SpawnerData> spawnerData = iterator.next();
+                applyCorrectMobCategory(spawnerData.value().type());
                 // prevent blacklisted animals from being respawned to prevent them from spawning endlessly since they also do not count towards the mob cap
-                if (!isAnimalDespawningAllowed(spawnerData.type, level.getGameRules(), MobCategory.CREATURE)) {
+                if (!isAnimalDespawningAllowed(spawnerData.value().type(),
+                        level.getGameRules(),
+                        MobCategory.CREATURE)) {
                     iterator.remove();
                 }
             }

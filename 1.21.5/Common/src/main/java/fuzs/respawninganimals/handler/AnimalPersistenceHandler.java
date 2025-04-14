@@ -23,7 +23,7 @@ public class AnimalPersistenceHandler {
                 } else if (mob.isLeashed()) {
                     // mobs with a lead attached to them
                     mob.setPersistenceRequired();
-                } else if (mob instanceof OwnableEntity ownable && ownable.getOwnerUUID() != null) {
+                } else if (mob instanceof OwnableEntity ownable && ownable.getOwnerReference() != null) {
                     // mobs that have an owner like horses or wolves
                     mob.setPersistenceRequired();
                 }

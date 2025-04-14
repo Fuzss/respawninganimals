@@ -8,7 +8,7 @@ import fuzs.puzzleslib.api.event.v1.entity.ServerEntityLevelEvents;
 import fuzs.puzzleslib.api.event.v1.entity.living.AnimalTameCallback;
 import fuzs.puzzleslib.api.event.v1.entity.living.CheckMobDespawnCallback;
 import fuzs.puzzleslib.api.event.v1.level.GatherPotentialSpawnsCallback;
-import fuzs.puzzleslib.api.event.v1.level.ServerLevelEvents;
+import fuzs.puzzleslib.api.event.v1.server.ServerLifecycleEvents;
 import fuzs.respawninganimals.handler.AnimalPersistenceHandler;
 import fuzs.respawninganimals.handler.AnimalSpawningHandler;
 import fuzs.respawninganimals.init.ModRegistry;
@@ -34,7 +34,7 @@ public class RespawningAnimals implements ModConstructor {
         CheckMobDespawnCallback.EVENT.register(AnimalSpawningHandler::onCheckMobDespawn);
         ServerEntityLevelEvents.LOAD.register(AnimalSpawningHandler::onEntityLoad);
         ServerEntityLevelEvents.SPAWN.register(AnimalSpawningHandler::onEntitySpawn);
-        ServerLevelEvents.LOAD.register(AnimalSpawningHandler::onLevelLoad);
+        ServerLifecycleEvents.STARTED.register(AnimalSpawningHandler::onServerStarted);
         GatherPotentialSpawnsCallback.EVENT.register(AnimalSpawningHandler::onGatherPotentialSpawns);
     }
 
